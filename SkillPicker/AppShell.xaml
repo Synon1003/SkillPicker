@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="SkillPicker.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:local="clr-namespace:SkillPicker.View"
+    FlyoutBehavior="Disabled"
+    Shell.TabBarUnselectedColor="{StaticResource Secondary}">
+    
+    
+
+    <TabBar>
+        <ShellContent 
+            Title="Collection"
+            Icon="scorpion_half.png"
+            ContentTemplate="{DataTemplate local:CollectionPage}" />
+        <ShellContent 
+            Title="Practice Picker"
+            Icon="handstand_halfsmall.png"
+            ContentTemplate="{DataTemplate local:PracticePickerPage}" />
+        <ShellContent
+            Title="Editor"
+            Icon="prettygirl_half.png"
+            ContentTemplate="{DataTemplate local:EditorPage}"
+        />
+    </TabBar>
+
+</Shell>

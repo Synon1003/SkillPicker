@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:view="clr-namespace:SkillPicker.View"
+             xmlns:mct="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+             x:Class="SkillPicker.View.CollectionPage"
+             Title="Collection">
+
+    <ContentPage.Resources>
+        <ResourceDictionary Source="SkillPickerResources.xaml" />
+    </ContentPage.Resources>
+    <ContentPage.Behaviors>
+        <mct:StatusBarBehavior StatusBarColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}" />
+    </ContentPage.Behaviors>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20,10" Spacing="15">
+            <CarouselView ItemsSource="{Binding StuntPictures}" IndicatorView="indicatorView" HeightRequest="364"
+              HorizontalOptions="FillAndExpand"
+              VerticalOptions="Center">
+                <CarouselView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout>
+                            <Border 
+                                Stroke="{StaticResource Secondary}"
+                                StrokeShape="RoundRectangle 10"
+                                HorizontalOptions="Center"
+                                VerticalOptions="Center"
+                            >
+                                <Image 
+                                    Source="{Binding ImageUrl}"
+                                    Aspect="AspectFill"
+                                    HeightRequest="320"
+                                    WidthRequest="320"
+                                    HorizontalOptions="Center" />
+                            </Border>
+                            <Label
+                                Text="{Binding Text}"
+                                HorizontalTextAlignment="Center"
+                                FontSize="16"
+                                MaxLines="2" />       
+                        </StackLayout>
+                    </DataTemplate>
+                </CarouselView.ItemTemplate>
+            </CarouselView>
+            <IndicatorView 
+                x:Name="indicatorView"
+                IndicatorColor="{StaticResource Gray100}"
+                SelectedIndicatorColor="{StaticResource Secondary}"
+                HorizontalOptions="Center" 
+                Margin="0,0,0,20"
+            />
+
+            
+            <StackLayout>
+                <SearchBar x:Name="searchBar"
+                    Placeholder="Search skills..."
+                    Text="{Binding SearchText}"
+                    SearchCommand="{Binding SearchSkillCommand}"
+                    SearchCommandParameter="{Binding Text, Source={x:Reference searchBar}}"
+                    SearchButtonPressed="OnSearchButtonPressed"
+                />
+                <ListView ItemsSource="{Binding SearchedSkills}" Margin="0,15,0,15" HasUnevenRows="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid ColumnDefinitions="3*,2*,*" ColumnSpacing="5">
+                                    <Label Text="{Binding Text}" Grid.Column="0" VerticalOptions="Center" Padding="0,5,0,5" />
+                                    <Label Text="{Binding Label}" Grid.Column="1" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{StaticResource Gray400}" />
+                                    <Label Text="{Binding Type}" Grid.Column="2" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{StaticResource Gray600}" />
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

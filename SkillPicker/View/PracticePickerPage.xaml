@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:view="clr-namespace:SkillPicker.View"
+             x:Class="SkillPicker.View.PracticePickerPage"
+             Title="Practice Picker">
+
+    <ContentPage.Resources>
+        <ResourceDictionary Source="SkillPickerResources.xaml" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <Grid RowDefinitions="185,*,60" RowSpacing="5" Padding="20,10,20,10">
+            <Border Grid.Row="0" Stroke="{StaticResource Secondary}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10,10,10,10" />
+                </Border.StrokeShape>
+                <Grid ColumnDefinitions="0.3*, 0.7*" RowDefinitions="50,50,50,50" RowSpacing="5" Padding="10,10,10,10">
+                    <Label BindingContext="{x:Reference WarmUpSlider}" Text="{Binding Value, StringFormat='WarmUps:  {0:F0}'}" Grid.Column="0" Grid.Row="0" VerticalOptions="Center" /> 
+                    <Slider x:Name="WarmUpSlider" Minimum="4" Maximum="9" Value="{Binding WarmUps}" Style="{StaticResource sliderStyle}"  Grid.Column="1" Grid.Row="0" />
+            
+                    <Label BindingContext="{x:Reference LearningSlider}" Text="{Binding Value, StringFormat='Learnings:  {0:F0}'}" Grid.Column="0" Grid.Row="1" VerticalOptions="Center" />
+                    <Slider x:Name="LearningSlider" Minimum="1" Maximum="6" Value="{Binding Learnings}"  Style="{StaticResource sliderStyle}" Grid.Column="1" Grid.Row="1" />
+            
+                    <Button Text="Generate" Style="{StaticResource ButtonStyle}" Grid.ColumnSpan="2" Grid.Row="2" Command="{Binding GenerateCommand}" VerticalOptions="End" />
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="2" Stroke="{StaticResource Secondary}">
+                <Border.StrokeShape>
+                    <RoundRectangle CornerRadius="10,10,10,10" />
+                </Border.StrokeShape>
+                <Label Text="{Binding RandomSkill}" FontSize="20" TextColor="{StaticResource Primary}" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding StartStopCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+            </Border>
+
+            <VerticalStackLayout Grid.Row="1" Padding="15,10" Spacing="20">
+                <ListView ItemsSource="{Binding WarmUpFields}" HasUnevenRows="True" >
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid ColumnDefinitions="*,8.2*,2.8*" ColumnSpacing="5">
+                                    <Label Text="{Binding Row, StringFormat='W{0:F0}:'}" Grid.Column="0" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{StaticResource Gray600}" />
+                                    <Label Text="{Binding Label}" Grid.Column="2" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{StaticResource Gray400}" />
+                                    <Label Text="{Binding Skill}" Grid.Column="1" VerticalOptions="Center" Padding="0,5,0,5" />
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <ListView ItemsSource="{Binding LearningFields}" HasUnevenRows="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <Grid ColumnDefinitions="*,8.2*,2.8*" ColumnSpacing="5">
+                                    <Label Text="{Binding Row, StringFormat='L{0:F0}:'}" Grid.Column="0" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{StaticResource Gray600}" />
+                                    <Label Text="{Binding Label}" Grid.Column="2" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{StaticResource Gray400}" />
+                                    <Label Text="{Binding Skill}" Grid.Column="1" VerticalOptions="Center" Padding="0,5,0,5" />
+                                </Grid>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                
+            </VerticalStackLayout>
+        </Grid>
+    </ScrollView>
+</ContentPage>
