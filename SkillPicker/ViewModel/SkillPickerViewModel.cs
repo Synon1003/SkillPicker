@@ -1,6 +1,5 @@
 ﻿using System.Collections.ObjectModel;
 using SkillPicker.Model;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace SkillPicker.ViewModel
 {
@@ -157,11 +156,18 @@ namespace SkillPicker.ViewModel
             }
         }
 
-        
-
         public List<String> SkillLabels
         {
-            get { return Skill.GetAllLabels(); }
+            get {
+                if (_skillViewModel.Type == "WarmUp")
+                {
+                    return Skill.GetWarmUpLabels();
+                }
+                else 
+                { 
+                
+                } return Skill.GetLearningLabels(); 
+            }
         }
 
         public List<String> SkillTypes
@@ -197,6 +203,7 @@ namespace SkillPicker.ViewModel
             _model.RandomSkillPicked += new EventHandler(Model_RandomSkillPicked);
 
             _skillViewModel = new SkillViewModel();
+            _skillViewModel.TypeChanged += new EventHandler(SkillViewModel_TypeChanged);
 
             _searchedSkills = new List<SkillViewModel>();
             _stuntPictures = new ObservableCollection<StuntPicture>(GetStuntPictures());
@@ -300,6 +307,13 @@ namespace SkillPicker.ViewModel
             });
         }
 
+        private void SkillViewModel_TypeChanged(object? sender, EventArgs e)
+        {
+            SkillViewModel.Label = "";
+            OnPropertyChanged(nameof(SkillViewModel));
+            OnPropertyChanged(nameof(SkillLabels));
+        }
+
         private void OnSearchSkill(String searchString)
         {
             List<SkillViewModel> searchedWarmUpSkills = WarmUpSkills.Where(s => s.Text.ToLower().Contains(searchString.ToLower()) || s.Label.ToLower().Contains(searchString.ToLower())).ToList();
@@ -331,7 +345,10 @@ namespace SkillPicker.ViewModel
                 Type = SkillViewModel.Type,
             });
 
-            SkillViewModel = new SkillViewModel();
+            SkillViewModel.Text = "";
+            SkillViewModel.Label = "";
+            OnPropertyChanged(nameof(SkillViewModel));
+            OnPropertyChanged(nameof(SkillLabels));
         }
 
         private void OnDeleteSkill(SkillViewModel skill)
@@ -340,7 +357,7 @@ namespace SkillPicker.ViewModel
             {
                 Name = skill.Text,
                 Label = skill.Label,
-                Type = SkillViewModel.Type,
+                Type = skill.Type,
             });
         }
 

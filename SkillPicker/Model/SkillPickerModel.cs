@@ -54,10 +54,10 @@ namespace SkillPicker.Model
 
         private void Timer_Elapsed(object? sender, ElapsedEventArgs e)
         {
-            List<Skill> _skillLabelSkills = _skills.Where(s => s.Label == "Skill").ToList();
-            if (_skillLabelSkills.Count > 0)
+            List<Skill> _randomLabelSkills = _skills.Where(s => s.Label == "Random").ToList();
+            if (_randomLabelSkills.Count > 0)
             { 
-                _randomSkill = _skillLabelSkills[_skillGenerator.Next(0, _skillLabelSkills.Count)].Name;
+                _randomSkill = _randomLabelSkills[_skillGenerator.Next(0, _randomLabelSkills.Count)].Name;
                 RandomSkillPicked?.Invoke(this, EventArgs.Empty);
             }
         }

@@ -18,23 +18,17 @@
         public enum SkillLabel
         {
             Hands,
-            Block,
+            Platform,
             OneLeg,
             OneArm,
-            Full,
+            Spin,
             Inverted,
 
             Transition,
             Dismount,
             Flyerpose,
-            Mount,
 
-            MountSkill,
-            MountSkillFlyerpose,
-            MountSkillDismount,
-            MountFlyerpose,
-            MountDismount,
-            Skill,
+            Random,
         }
 
         private SkillType _type;
@@ -67,23 +61,17 @@
                 switch (_label)
                 {
                     case SkillLabel.Hands: return "Hands";
-                    case SkillLabel.Block: return "Block";
+                    case SkillLabel.Platform: return "Platform";
                     case SkillLabel.OneLeg: return "OneLeg";
                     case SkillLabel.OneArm: return "OneArm";
-                    case SkillLabel.Full: return "Full";
+                    case SkillLabel.Spin: return "Spin";
                     case SkillLabel.Inverted: return "Inverted";
 
                     case SkillLabel.Transition: return "Transition";
                     case SkillLabel.Dismount: return "Dismount";
                     case SkillLabel.Flyerpose: return "Flyerpose";
-                    case SkillLabel.Mount: return "Mount";
 
-                    case SkillLabel.MountSkill: return "MountSkill";
-                    case SkillLabel.MountSkillFlyerpose: return "MountSkillFlyerpose";
-                    case SkillLabel.MountSkillDismount: return "MountSkillDismount";
-                    case SkillLabel.MountFlyerpose: return "MountFlyerpose";
-                    case SkillLabel.MountDismount: return "MountDismount";
-                    default: return "Skill";
+                    default: return "Random";
                 }
             }
             set
@@ -91,23 +79,17 @@
                 switch (value)
                 {
                     case "Hands": _label = SkillLabel.Hands; break;
-                    case "Block": _label = SkillLabel.Block; break;
+                    case "Platform": _label = SkillLabel.Platform; break;
                     case "OneLeg": _label = SkillLabel.OneLeg; break;
                     case "OneArm": _label = SkillLabel.OneArm; break;
-                    case "Full": _label = SkillLabel.Full; break;
+                    case "Spin": _label = SkillLabel.Spin; break;
                     case "Inverted": _label = SkillLabel.Inverted; break;
 
                     case "Transition": _label = SkillLabel.Transition; break;
                     case "Dismount": _label = SkillLabel.Dismount; break;
                     case "Flyerpose": _label = SkillLabel.Flyerpose; break;
-                    case "Mount": _label = SkillLabel.Mount; break;
 
-                    case "MountSkill": _label = SkillLabel.MountSkill; break;
-                    case "MountSkillFlyerpose": _label = SkillLabel.MountSkillFlyerpose; break;
-                    case "MountSkillDismount": _label = SkillLabel.MountSkillDismount; break;
-                    case "MountFlyerpose": _label = SkillLabel.MountFlyerpose; break;
-                    case "MountDismount": _label = SkillLabel.MountDismount; break;
-                    default: _label = SkillLabel.Skill; break;
+                    default: _label = SkillLabel.Random; break;
                 }
             }
         }
@@ -164,7 +146,7 @@
         public static List<String> GetLearningLabels()
         {
             List<String> labels = Enum.GetNames(typeof(SkillLabel)).ToList();
-            return labels.GetRange(9,6);
+            return labels.GetRange(1,5);
         }
 
         public static List<String> GetTypes()
