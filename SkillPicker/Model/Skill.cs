@@ -132,21 +132,9 @@
             _type = SkillType.WarmUp;
         }
 
-        public static List<String> GetAllLabels()
+        public static List<String> GetLabels()
         {
             return Enum.GetNames(typeof(SkillLabel)).ToList();
-        }
-
-        public static List<String> GetWarmUpLabels()
-        {
-            List<String> labels = Enum.GetNames(typeof(SkillLabel)).ToList();
-            return labels.GetRange(0, 9);
-        }
-
-        public static List<String> GetLearningLabels()
-        {
-            List<String> labels = Enum.GetNames(typeof(SkillLabel)).ToList();
-            return labels.GetRange(1,5);
         }
 
         public static List<String> GetTypes()

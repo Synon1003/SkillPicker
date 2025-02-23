@@ -4,9 +4,9 @@
              x:Class="SkillPicker.View.SkillPickerResources">
 
     <Style x:Key="ButtonStyle" TargetType="Button">
-        <Setter Property="TextColor" Value="{StaticResource Primary}" />
+        <Setter Property="TextColor" Value="{AppThemeBinding Light={StaticResource Primary},Dark={StaticResource Primary}}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
-        <Setter Property="BorderColor" Value="{StaticResource Secondary}" />
+        <Setter Property="BorderColor" Value="{AppThemeBinding Light={StaticResource PrimaryDark},Dark={StaticResource PrimaryDark}}" />
         <Setter Property="BorderWidth" Value="1" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
@@ -15,7 +15,7 @@
                     <VisualState x:Name="Disabled" />
                     <VisualState x:Name="Pressed">
                         <VisualState.Setters>
-                            <Setter Property="BackgroundColor" Value="{StaticResource Secondary}" />
+                            <Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource PrimaryDark},Dark={StaticResource PrimaryDark}}" />
                         </VisualState.Setters>
                     </VisualState>
                 </VisualStateGroup>
@@ -37,9 +37,9 @@
                     <VisualStateGroup x:Name="CheckedStates">
                         <VisualState x:Name="Checked">
                             <VisualState.Setters>
-                                <Setter TargetName="RadioLabel" Property="Label.TextColor" Value="{StaticResource Primary}"/>
+                                <Setter TargetName="RadioLabel" Property="Label.TextColor" Value="{AppThemeBinding Light={StaticResource Tertiary},Dark={StaticResource Primary}}"/>
                                 <Setter TargetName="RadioContainer" Property="Border.BackgroundColor" Value="Transparent" />
-                                <Setter TargetName="RadioContainer" Property="Border.Stroke" Value="{StaticResource Primary}" />
+                                <Setter TargetName="RadioContainer" Property="Border.Stroke" Value="{AppThemeBinding Light={StaticResource Tertiary},Dark={StaticResource Primary}}" />
                             </VisualState.Setters>
                         </VisualState>
                         <VisualState x:Name="Unchecked">
@@ -57,8 +57,8 @@
 
 
     <Style x:Key="sliderStyle" TargetType="Slider">
-        <Setter Property="ThumbColor" Value="{StaticResource Secondary}" />
-        <Setter Property="MinimumTrackColor" Value="{StaticResource Secondary}" />
+        <Setter Property="ThumbColor" Value="{AppThemeBinding Light={StaticResource PrimaryDark},Dark={StaticResource PrimaryDark}}" />
+        <Setter Property="MinimumTrackColor" Value="{AppThemeBinding Light={StaticResource PrimaryDark},Dark={StaticResource PrimaryDark}}" />
         <Setter Property="VerticalOptions" Value="Center" />
     </Style>
 

@@ -3,6 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:view="clr-namespace:SkillPicker.View"
              xmlns:mct="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+             xmlns:local="clr-namespace:SkillPicker.ViewModel"
+             x:DataType="local:SkillPickerViewModel"
              x:Class="SkillPicker.View.CollectionPage"
              Title="Collection">
 
@@ -10,19 +12,18 @@
         <ResourceDictionary Source="SkillPickerResources.xaml" />
     </ContentPage.Resources>
     <ContentPage.Behaviors>
-        <mct:StatusBarBehavior StatusBarColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}" />
+        <mct:StatusBarBehavior StatusBarColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"
+                           StatusBarStyle="{AppThemeBinding Light=DarkContent, Dark=LightContent}" />
     </ContentPage.Behaviors>
 
     <ScrollView>
         <VerticalStackLayout Padding="20,10" Spacing="15">
-            <CarouselView ItemsSource="{Binding StuntPictures}" IndicatorView="indicatorView" HeightRequest="364"
-              HorizontalOptions="FillAndExpand"
-              VerticalOptions="Center">
+            <CarouselView ItemsSource="{Binding StuntPictures}" IndicatorView="indicatorView" HeightRequest="364" VerticalOptions="Center">
                 <CarouselView.ItemTemplate>
-                    <DataTemplate>
+                    <DataTemplate x:DataType="local:StuntPicture">
                         <StackLayout>
                             <Border 
-                                Stroke="{StaticResource Secondary}"
+                                Stroke="{AppThemeBinding Light={StaticResource PrimaryDark},Dark={StaticResource PrimaryDark}}"
                                 StrokeShape="RoundRectangle 10"
                                 HorizontalOptions="Center"
                                 VerticalOptions="Center"
@@ -46,7 +47,7 @@
             <IndicatorView 
                 x:Name="indicatorView"
                 IndicatorColor="{StaticResource Gray100}"
-                SelectedIndicatorColor="{StaticResource Secondary}"
+                SelectedIndicatorColor="{AppThemeBinding Light={StaticResource PrimaryDark},Dark={StaticResource PrimaryDark}}"
                 HorizontalOptions="Center" 
                 Margin="0,0,0,20"
             />
@@ -62,12 +63,12 @@
                 />
                 <ListView ItemsSource="{Binding SearchedSkills}" Margin="0,15,0,15" HasUnevenRows="True">
                     <ListView.ItemTemplate>
-                        <DataTemplate>
+                        <DataTemplate x:DataType="local:SkillViewModel">
                             <ViewCell>
                                 <Grid ColumnDefinitions="3*,2*,*" ColumnSpacing="5">
                                     <Label Text="{Binding Text}" Grid.Column="0" VerticalOptions="Center" Padding="0,5,0,5" />
-                                    <Label Text="{Binding Label}" Grid.Column="1" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{StaticResource Gray400}" />
-                                    <Label Text="{Binding Type}" Grid.Column="2" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{StaticResource Gray600}" />
+                                    <Label Text="{Binding Label}" Grid.Column="1" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{AppThemeBinding Light={StaticResource Gray400},Dark={StaticResource Gray400}}" />
+                                    <Label Text="{Binding Type}" Grid.Column="2" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{AppThemeBinding Light={StaticResource Gray200},Dark={StaticResource Gray200}}" />
                                 </Grid>
                             </ViewCell>
                         </DataTemplate>

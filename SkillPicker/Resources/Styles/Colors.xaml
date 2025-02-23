@@ -8,15 +8,16 @@
 
     <Color x:Key="Primary">#8B0000</Color>
     <!-- Dark Red -->
-    <Color x:Key="PrimaryDark">#B22222</Color>
+    <Color x:Key="PrimaryDark">#FF6347</Color>
     <!-- Firebrick Red -->
-    <Color x:Key="PrimaryDarkText">#330000</Color>
+    <Color x:Key="PrimaryDarkText">#4B0000</Color>
     <!-- Very Dark Red -->
-    <Color x:Key="Secondary">#FF6347</Color>
+    <Color x:Key="Secondary">#4B0000</Color>
+    <Color x:Key="SecondaryDark">#8B0000</Color>
     <!-- Tomato Red -->
-    <Color x:Key="SecondaryDarkText">#CC3333</Color>
+    <Color x:Key="SecondaryDarkText">#FF6347</Color>
     <!-- Medium Red -->
-    <Color x:Key="Tertiary">#A10D2F</Color>
+    <Color x:Key="Tertiary">#CC3333</Color>
     <!-- Crimson -->
 
     <Color x:Key="White">White</Color>
@@ -39,8 +40,8 @@
     <Color x:Key="Gray900">#212121</Color>
     <Color x:Key="Gray950">#141414</Color>
 
-    <SolidColorBrush x:Key="PrimaryBrush" Color="{StaticResource Primary}"/>
-    <SolidColorBrush x:Key="SecondaryBrush" Color="{StaticResource Secondary}"/>
+    <SolidColorBrush x:Key="PrimaryBrush" Color="{AppThemeBinding Light={StaticResource Primary},Dark={StaticResource PrimaryDark}}"/>
+    <SolidColorBrush x:Key="SecondaryBrush" Color="{AppThemeBinding Light={StaticResource Secondary},Dark={StaticResource SecondaryDark}}"/>
     <SolidColorBrush x:Key="TertiaryBrush" Color="{StaticResource Tertiary}"/>
     <SolidColorBrush x:Key="WhiteBrush" Color="{StaticResource White}"/>
     <SolidColorBrush x:Key="BlackBrush" Color="{StaticResource Black}"/>

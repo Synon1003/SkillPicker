@@ -120,10 +120,21 @@ namespace SkillPicker.Model
             SkillsChanged?.Invoke(this, new SkillsChangedEventArgs(_skills));
         }
 
+        private List<String> GetLearningLabels(List<String> pickableLabels)
+        {
+            List<String> learningLabels = new List<String>();
+            learningLabels.Add(pickableLabels[1]);
+            learningLabels.AddRange(pickableLabels.GetRange(4, 2));
+            learningLabels.Add(pickableLabels[_skillGenerator.Next(2, 4)]);
+            learningLabels.Add(pickableLabels[_skillGenerator.Next(6, 9)]);
+            
+            return learningLabels;
+        }
+
         public void GeneratePractice(Int32 warmUps, Int32 learnings)
         {
-            List<String> warmUpLabels = Skill.GetWarmUpLabels();
-            List<String> learningLabels = Skill.GetLearningLabels();
+            List<String> warmUpLabels = Skill.GetLabels().GetRange(0,9);
+            List<String> learningLabels = GetLearningLabels(Skill.GetLabels().GetRange(0,9));
 
             if (warmUps != _practiceList.Where(s => s.Type == "WarmUp").Count() ||
                 learnings != _practiceList.Where(s => s.Type == "Learning").Count())
@@ -166,6 +177,7 @@ namespace SkillPicker.Model
                     Int32 skillCount = warmUpSkillsByLabel.Count;
 
                     _practiceList[idx].Name = skillCount > 0 ? warmUpSkillsByLabel[_skillGenerator.Next(0, skillCount)].Name : "<No Skill>";
+                    _practiceList[idx].Label = warmUpLabels[idx];
                 }
 
                 for (Int32 idx = 0; idx < learnings; idx++)
@@ -174,6 +186,7 @@ namespace SkillPicker.Model
                     Int32 skillCount = learningSkillsByLabel.Count;
 
                     _practiceList[idx + warmUps].Name = skillCount > 0 ? learningSkillsByLabel[_skillGenerator.Next(0, skillCount)].Name : "<No Skill>";
+                    _practiceList[idx + warmUps].Label = learningLabels[idx];
                 }
 
                 PracticeSkillsChanged?.Invoke(this, new PracticeChangedEventArgs(_practiceList));
