@@ -62,6 +62,13 @@
         <Setter Property="VerticalOptions" Value="Center" />
     </Style>
 
+    <Style x:Key="borderStyle" TargetType="Border">
+        <Setter Property="StrokeShape">
+            <RoundRectangle CornerRadius="10,10,10,10" />
+        </Setter>
+        <Setter Property="Stroke" Value="{AppThemeBinding Light={StaticResource PrimaryDark},Dark={StaticResource PrimaryDark}}" />
+    </Style>
+
     <Style x:Key="ModifiedDateStyle" TargetType="Label">
         <Setter Property="FontSize" Value="Micro" />
         <Setter Property="Margin" Value="25,0,5,0" />

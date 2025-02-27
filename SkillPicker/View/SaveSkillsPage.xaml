@@ -15,11 +15,11 @@
                            StatusBarStyle="{AppThemeBinding Light=DarkContent, Dark=LightContent}" />
     </ContentPage.Behaviors>
 
-    <VerticalStackLayout>
+    <VerticalStackLayout Padding="20,10,20,10">
         <Entry x:Name="saveNameEntry" Placeholder="Name of the skill setup ..." />
         <Button Text="Save" Style="{StaticResource ButtonStyle}" Command="{Binding NewSaveCommand}" CommandParameter="{Binding Source={x:Reference saveNameEntry}, Path=Text}" Margin="0,10,0,0" />
 
-        <ListView ItemsSource="{Binding StoredSkills}" Margin="0,15,0,15">
+        <ListView ItemsSource="{Binding StoredSkills}" Margin="0,10,0,10">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:StoredSkillsViewModel">
                     <ViewCell>

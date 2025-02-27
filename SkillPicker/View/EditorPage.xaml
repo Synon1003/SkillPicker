@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:mct="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:local="clr-namespace:SkillPicker.ViewModel"
              x:DataType="local:SkillPickerViewModel"
              x:Class="SkillPicker.View.EditorPage"
@@ -16,17 +17,14 @@
     </ContentPage.Behaviors>
 
     <ScrollView>
-        <Grid ColumnDefinitions="0.5*, 0.5*" RowDefinitions="50,235,50,*" RowSpacing="5" ColumnSpacing="10" Padding="20,10,20,10">
-            <Grid ColumnSpacing="10" ColumnSpan="2" ColumnDefinitions="*,*,*" Grid.Row="0">
+        <Grid ColumnDefinitions="0.5*, 0.5*" RowDefinitions="50,235,*,50" RowSpacing="5" ColumnSpacing="10" Padding="20,10,20,10">
+            <Grid ColumnSpacing="10" Grid.ColumnSpan="2" ColumnDefinitions="*,*,*" Grid.Row="0">
                 <Button Command="{Binding ResetSkillsCommand}" Text="New setup" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.Column="0" Grid.Row="0" />
                 <Button Command="{Binding SaveSkillsCommand}" Text="Save setup" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.Column="1" Grid.Row="0" />
                 <Button Command="{Binding LoadSkillsCommand}" Text="Load setup" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.Column="2" Grid.Row="0"/>
             </Grid>
 
-            <Border Grid.ColumnSpan="2" Grid.Row="1" Stroke="{AppThemeBinding Light={StaticResource PrimaryDark},Dark={StaticResource PrimaryDark}}">
-                <Border.StrokeShape>
-                    <RoundRectangle CornerRadius="10,10,10,10" />
-                </Border.StrokeShape>
+            <Border Grid.ColumnSpan="2" Grid.Row="1" Style="{StaticResource borderStyle}">
                 <Grid ColumnDefinitions="0.3*, 0.7*" RowDefinitions="50,50,50,50" RowSpacing="5" Padding="10,10,10,10">
                     <Label Text="Type:" Grid.Column="0" Grid.Row="0" VerticalTextAlignment="Center"/>
                     <HorizontalStackLayout BindableLayout.ItemsSource="{Binding SkillTypes}" Grid.Column="1" Grid.Row="0" Spacing="20" RadioButtonGroup.GroupName="Types" RadioButtonGroup.SelectedValue="{Binding SkillViewModel.Type}" VerticalOptions="Center">
@@ -47,65 +45,78 @@
                 </Grid>
             </Border>
 
-            <Label Text="{Binding LearningSkills.Count, StringFormat='Learning ({0:F0})'}" Grid.Column="0" Grid.Row="2" Style="{StaticResource SubHeadline}" VerticalTextAlignment="End" />
-            <ListView Grid.Column="0" Grid.Row="3" ItemsSource="{Binding LearningSkills}" Margin="5,0,5,10" HasUnevenRows="True">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="local:SkillViewModel">
-                        <ViewCell>
-                            <SwipeView>
-                                <SwipeView.RightItems>
-                                    <SwipeItems>
-                                        <SwipeItem Text="Delete" BackgroundColor="Red"
-                            Command="{Binding BindingContext.DeleteSkillCommand, Source={RelativeSource AncestorType={x:Type ListView}}}"
-                            CommandParameter="{Binding}"/>
-                                    </SwipeItems>
-                                </SwipeView.RightItems>
-                                <SwipeView.LeftItems>
-                                    <SwipeItems>
-                                        <SwipeItem Text="Upgrade" BackgroundColor="Olive"
-                            Command="{Binding BindingContext.UpgradeSkillCommand, Source={RelativeSource AncestorType={x:Type ListView}}}"
-                            CommandParameter="{Binding}"/>
-                                    </SwipeItems>
-                                </SwipeView.LeftItems>
-                                <Grid RowDefinitions="*,*" Padding="5,4,5,4">
-                                    <Label Text="{Binding Text}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalOptions="Center" />
-                                    <Label Text="{Binding Label}" Grid.Row="1" HorizontalTextAlignment="Center" VerticalOptions="Center" TextColor="{StaticResource Gray400}" FontSize="Micro"/>
-                                </Grid>
-                            </SwipeView>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <toolkit:Expander Grid.Column="0" Grid.Row="2">
+                <toolkit:Expander.Header >
+                    <Label Text="{Binding LearningSkills.Count, StringFormat='Learning ({0:F0})'}" Grid.Column="0" Grid.Row="2" Style="{StaticResource SubHeadline}" Margin="0,10,0,10" />
+                </toolkit:Expander.Header>
+                <ListView Grid.Column="0" Grid.Row="3" ItemsSource="{Binding LearningSkills}" Margin="5,0,5,10" HasUnevenRows="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="local:SkillViewModel">
+                            <ViewCell>
+                                <SwipeView>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems>
+                                            <SwipeItem Text="Delete" BackgroundColor="Red"
+                                Command="{Binding BindingContext.DeleteSkillCommand, Source={RelativeSource AncestorType={x:Type ListView}}}"
+                                CommandParameter="{Binding}"/>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
+                                    <SwipeView.LeftItems>
+                                        <SwipeItems>
+                                            <SwipeItem Text="Upgrade" BackgroundColor="Olive"
+                                Command="{Binding BindingContext.UpgradeSkillCommand, Source={RelativeSource AncestorType={x:Type ListView}}}"
+                                CommandParameter="{Binding}"/>
+                                        </SwipeItems>
+                                    </SwipeView.LeftItems>
+                                    <Grid RowDefinitions="*,*" Padding="5,4,5,4">
+                                        <Label Text="{Binding Text}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                                        <Label Text="{Binding Label}" Grid.Row="1" HorizontalTextAlignment="Center" VerticalOptions="Center" TextColor="{StaticResource Gray400}" FontSize="Micro"/>
+                                    </Grid>
+                                </SwipeView>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </toolkit:Expander>
 
-            <Label Text="{Binding WarmUpSkills.Count, StringFormat='WarmUp ({0:F0})'}" Grid.Column="1" Grid.Row="2" Style="{StaticResource SubHeadline}" VerticalTextAlignment="End" />
-            <ListView Grid.Column="1" Grid.Row="3" ItemsSource="{Binding WarmUpSkills}" Margin="5,0,5,10" HasUnevenRows="True">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="local:SkillViewModel">
-                        <ViewCell>
-                            <SwipeView>
-                                <SwipeView.RightItems>
-                                    <SwipeItems>
-                                        <SwipeItem Text="Downgrade" BackgroundColor="Pink"
-                                            Command="{Binding BindingContext.DowngradeSkillCommand, Source={RelativeSource AncestorType={x:Type ListView}}}"
-                                            CommandParameter="{Binding}"/>
-                                    </SwipeItems>
-                                </SwipeView.RightItems>
-                                <SwipeView.LeftItems>
-                                    <SwipeItems>
-                                        <SwipeItem Text="Delete" BackgroundColor="Red"
-                                            Command="{Binding BindingContext.DeleteSkillCommand, Source={RelativeSource AncestorType={x:Type ListView}}}"
-                                            CommandParameter="{Binding}"/>
-                                    </SwipeItems>
-                                </SwipeView.LeftItems>
-                                <Grid RowDefinitions="*,*" Padding="5,4,5,4">
-                                    <Label Text="{Binding Text}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalOptions="Center" />
-                                    <Label Text="{Binding Label}" Grid.Row="1" HorizontalTextAlignment="Center" VerticalOptions="Center" TextColor="{StaticResource Gray400}" FontSize="Micro" />
-                                </Grid>
-                            </SwipeView>
-                        </ViewCell>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <toolkit:Expander Grid.Column="1" Grid.Row="2">
+                <toolkit:Expander.Header >
+                    <Label Text="{Binding WarmUpSkills.Count, StringFormat='WarmUp ({0:F0})'}" Grid.Column="1" Grid.Row="2" Style="{StaticResource SubHeadline}" Margin="0,10,0,10" />
+                </toolkit:Expander.Header>
+                <ListView Grid.Column="1" Grid.Row="3" ItemsSource="{Binding WarmUpSkills}" Margin="5,0,5,10" HasUnevenRows="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="local:SkillViewModel">
+                            <ViewCell>
+                                <SwipeView>
+                                    <SwipeView.RightItems>
+                                        <SwipeItems>
+                                            <SwipeItem Text="Downgrade" BackgroundColor="Pink"
+                                Command="{Binding BindingContext.DowngradeSkillCommand, Source={RelativeSource AncestorType={x:Type ListView}}}"
+                                CommandParameter="{Binding}"/>
+                                        </SwipeItems>
+                                    </SwipeView.RightItems>
+                                    <SwipeView.LeftItems>
+                                        <SwipeItems>
+                                            <SwipeItem Text="Delete" BackgroundColor="Red"
+                                Command="{Binding BindingContext.DeleteSkillCommand, Source={RelativeSource AncestorType={x:Type ListView}}}"
+                                CommandParameter="{Binding}"/>
+                                        </SwipeItems>
+                                    </SwipeView.LeftItems>
+                                    <Grid RowDefinitions="*,*" Padding="5,4,5,4">
+                                        <Label Text="{Binding Text}" Grid.Row="0" HorizontalTextAlignment="Center" VerticalOptions="Center" />
+                                        <Label Text="{Binding Label}" Grid.Row="1" HorizontalTextAlignment="Center" VerticalOptions="Center" TextColor="{StaticResource Gray400}" FontSize="Micro" />
+                                    </Grid>
+                                </SwipeView>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </toolkit:Expander>
+
+            <Grid ColumnSpacing="10" Grid.ColumnSpan="2" ColumnDefinitions="*,*" Grid.Row="3">
+                <Button Command="{Binding NewImageCommand}" Text="Add Image" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.Column="0" Grid.Row="0"  />
+                <Button Command="{Binding ManageLabelsCommand}" Text="Manage Labels" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.Column="1" Grid.Row="0"/>
+            </Grid>
         </Grid>
     </ScrollView>
 </ContentPage>

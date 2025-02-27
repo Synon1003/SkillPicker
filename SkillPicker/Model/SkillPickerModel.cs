@@ -8,6 +8,7 @@ namespace SkillPicker.Model
     {
         private SortedSet<Skill> _skills;
         private List<Skill> _practiceList;
+        private List<StuntImage> _stuntImages;
         private ISkillPickerDataAccess _dataAccess;
         private Random _skillGenerator;
 
@@ -20,15 +21,18 @@ namespace SkillPicker.Model
         public event EventHandler<SkillsChangedEventArgs>? SkillsChanged;
         public event EventHandler<PracticeChangedEventArgs>? PracticeChanged;
         public event EventHandler<PracticeChangedEventArgs>? PracticeSkillsChanged;
+        public event EventHandler<StuntImagesChangedEventArgs>? StuntImagesChanged;
         public event EventHandler? RandomSkillPicked;
 
         public IEnumerable<Skill> Skills { get { return _skills; } set { _skills = new SortedSet<Skill>(value); } }
+        public List<StuntImage> StuntImages { get { return _stuntImages; } set { _stuntImages = new List<StuntImage>(value); } }
         public SkillPickerModel(ISkillPickerDataAccess dataAccess)
         {
             _dataAccess = dataAccess;
             _skillGenerator = new Random();
             _skills = new SortedSet<Skill>();
             _practiceList = new List<Skill>();
+            _stuntImages = new List<StuntImage>();
 
             _timer = new Timer(20);
             _timer.Elapsed += new ElapsedEventHandler(Timer_Elapsed);
@@ -120,6 +124,52 @@ namespace SkillPicker.Model
             SkillsChanged?.Invoke(this, new SkillsChangedEventArgs(_skills));
         }
 
+        public async Task AddStuntImageAsync(StuntImage stuntImage, byte[] imageBytes)
+        {
+            if (_dataAccess == null)
+                return;
+
+            if (!_stuntImages.Any(s => s.Equals(stuntImage)))
+            {
+                stuntImage.ImageUrl = await _dataAccess.CreateImage(stuntImage.Filename, imageBytes);
+                _stuntImages.Add(stuntImage);
+
+                StuntImagesChanged?.Invoke(this, new StuntImagesChangedEventArgs(_stuntImages));
+            }
+        }
+
+        public void DeleteStuntImage(StuntImage stuntImage)
+        {
+            if (_stuntImages.Count <= 1 || _dataAccess == null)
+                return;
+
+            foreach (StuntImage s in _stuntImages)
+            {
+                if (s.Equals(stuntImage))
+                {
+                    _stuntImages.Remove(s);
+                    _dataAccess.DeleteImage(s.ImageUrl);
+                    
+                    StuntImagesChanged?.Invoke(this, new StuntImagesChangedEventArgs(_stuntImages));
+                    break;
+                }
+            }
+        }
+
+        public void InitStuntImages()
+        {
+            if (_stuntImages.Count == 0)
+            { 
+                _stuntImages.Add(new StuntImage { Stunt = "Scorpion", Protagonist = "Hanó", ImageUrl = "scorpion2024.jpg", Filename = "scorpion2024.jpg" });
+                _stuntImages.Add(new StuntImage { Stunt = "Handstand Split", Protagonist = "Hanó", ImageUrl = "handstandsplit2024.jpg", Filename = "handstandsplit2024.jpg" });
+                _stuntImages.Add(new StuntImage { Stunt = "Pretty Girl", Protagonist = "Elise", ImageUrl = "prettygirl2024.jpg", Filename = "prettygirl2024.jpg" });
+
+            }
+
+            StuntImagesChanged?.Invoke(this, new StuntImagesChangedEventArgs(_stuntImages));
+        }
+
+
         private List<String> GetLearningLabels(List<String> pickableLabels)
         {
             List<String> learningLabels = new List<String>();
@@ -198,7 +248,7 @@ namespace SkillPicker.Model
             if (_dataAccess == null)
                 return;
 
-            List<String> skillTexts = await _dataAccess.LoadAsync(path);
+            List<String> skillTexts = await _dataAccess.LoadSkillsAsync(path);
 
             _skills = new SortedSet<Skill>(new SkillComparer());
             foreach (String skillText in skillTexts)
@@ -226,7 +276,37 @@ namespace SkillPicker.Model
                 skillTexts.Add(skill.ToString());
             }
 
-            await _dataAccess.SaveAsync(path, skillTexts);
+            await _dataAccess.SaveSkillsAsync(path, skillTexts);
+        }
+
+        public async Task LoadImagesAsync(String path)
+        {
+            if (_dataAccess == null)
+                return;
+
+            List<String> imageTexts = await _dataAccess.LoadImagesAsync(path);
+
+            _stuntImages = new List<StuntImage>();
+            foreach (String imageText in imageTexts)
+            {
+                _stuntImages.Add(new StuntImage(imageText));
+            }
+        
+            StuntImagesChanged?.Invoke(this, new StuntImagesChangedEventArgs(_stuntImages));
+        }
+
+        public async Task SaveImagesAsync(String path)
+        {
+            if (_dataAccess == null)
+                return;
+
+            List<String> imageTexts = new List<String>();
+            foreach (StuntImage si in _stuntImages)
+            {
+                imageTexts.Add(si.ToString());
+            }
+
+            await _dataAccess.SaveImagesAsync(path, imageTexts);
         }
     }
 }

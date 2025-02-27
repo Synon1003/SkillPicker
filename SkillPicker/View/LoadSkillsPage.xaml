@@ -15,7 +15,7 @@
                            StatusBarStyle="{AppThemeBinding Light=DarkContent, Dark=LightContent}" />
     </ContentPage.Behaviors>
 
-    <ListView ItemsSource="{Binding StoredSkills}">
+    <ListView ItemsSource="{Binding StoredSkills}" Margin="20,10,20,10">
         <ListView.ItemTemplate>
             <DataTemplate x:DataType="local:StoredSkillsViewModel">
                 <ViewCell>

@@ -15,7 +15,7 @@
             ContentTemplate="{DataTemplate local:CollectionPage}" />
         <ShellContent 
             Title="Practice Picker"
-            Icon="handstand_halfsmall.png"
+            Icon="handstand_half.png"
             ContentTemplate="{DataTemplate local:PracticePickerPage}" />
         <ShellContent
             Title="Editor"

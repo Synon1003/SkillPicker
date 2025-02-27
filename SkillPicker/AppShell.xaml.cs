@@ -16,6 +16,8 @@ namespace SkillPicker
 
         private LoadSkillsPage _loadSkillsPage;
         private SaveSkillsPage _saveSkillsPage;
+        private NewImagePage _newImagePage;
+        private PracticeLabelEditorPage _practiceLabelEditorPage;
 
         public AppShell(ISkillPickerModel skillPickerModel)
         {
@@ -26,6 +28,15 @@ namespace SkillPicker
             _skillPickerViewModel = new SkillPickerViewModel(_skillPickerModel);
             _skillPickerViewModel.LoadSkills += new EventHandler(SkillPickerViewModel_LoadSkills);
             _skillPickerViewModel.SaveSkills += new EventHandler(SkillPickerViewModel_SaveSkills);
+            _skillPickerViewModel.NewImage += new EventHandler(SkillPickerViewModel_NewImage);
+            _skillPickerViewModel.ImageAddedToGallery += new EventHandler(SkillPickerViewModel_ImageAddedToGallery);
+            _skillPickerViewModel.ManageLabels += new EventHandler(SkillPickerViewModel_ManageLabels);
+
+            _newImagePage = new NewImagePage();
+            _newImagePage.BindingContext = _skillPickerViewModel;
+
+            _practiceLabelEditorPage = new PracticeLabelEditorPage();
+            _practiceLabelEditorPage.BindingContext = _skillPickerViewModel;
 
             _store = new Store();
             _storeModel = new StoredSkillsBrowserModel(_store);
@@ -52,6 +63,21 @@ namespace SkillPicker
         {
             await _storeModel.UpdateAsync();
             await Navigation.PushAsync(_saveSkillsPage);
+        }
+
+        private async void SkillPickerViewModel_NewImage(object? sender, System.EventArgs e)
+        {
+            await Navigation.PushAsync(_newImagePage);
+        }
+
+        private async void SkillPickerViewModel_ImageAddedToGallery(object? sender, System.EventArgs e)
+        {
+            await Navigation.PopAsync();
+        }
+
+        private async void SkillPickerViewModel_ManageLabels(object? sender, System.EventArgs e)
+        {
+            await Navigation.PushAsync(_practiceLabelEditorPage);
         }
 
         private async void StoreViewModel_SkillsLoading(object? sender, StoredSkillsEventArgs e)

@@ -8,6 +8,7 @@
         event EventHandler<SkillsChangedEventArgs>? SkillsChanged;
         event EventHandler<PracticeChangedEventArgs>? PracticeChanged;
         event EventHandler<PracticeChangedEventArgs>? PracticeSkillsChanged;
+        event EventHandler<StuntImagesChangedEventArgs>? StuntImagesChanged;
         event EventHandler RandomSkillPicked;
         void ResetSkills();
         void CreateNewSkill(Skill skill);
@@ -19,5 +20,10 @@
         void TakeRandomSkill();
         Task LoadSkillsAsync(String path);
         Task SaveSkillsAsync(String path);
+        Task LoadImagesAsync(String path);
+        Task SaveImagesAsync(String path);
+        Task AddStuntImageAsync(StuntImage stuntImage, byte[] imageBytes);
+        void DeleteStuntImage(StuntImage stuntImage);
+        void InitStuntImages();
     }
 }

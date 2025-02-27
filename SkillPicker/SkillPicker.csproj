@@ -38,8 +38,8 @@
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 
     <MauiXamlUseCompiledBindings>true</MauiXamlUseCompiledBindings>
-    <!--UseInterpreter>false</UseInterpreter-->
-    <!--PublishReadyToRun>true</PublishReadyToRun-->
+    <UseInterpreter>false</UseInterpreter>
+    <PublishReadyToRun>false</PublishReadyToRun>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -55,8 +55,10 @@
 		<!-- Custom Fonts -->
 		<MauiFont Include="Resources\Fonts\*" />
 
-		<!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
-		<MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    <!-- Raw Assets (also remove the "Resources\Raw" prefix) -->
+    <MauiAsset Include="Resources\Raw\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
+    <!--to allow FileSystem.OpenAppPackageFileAsync on image-->
+    <MauiAsset Include="Resources\Images\**" LogicalName="%(RecursiveDir)%(Filename)%(Extension)" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -67,6 +69,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="View\NewImagePage.xaml.cs">
+	    <DependentUpon>NewImagePage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="View\LoadSkillsPage.xaml.cs">
 	    <DependentUpon>LoadSkillsPage.xaml</DependentUpon>
 	  </Compile>
@@ -85,7 +90,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="View\NewImagePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="View\LoadSkillsPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="View\PracticeLabelEditorPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="View\PracticePickerPage.xaml">

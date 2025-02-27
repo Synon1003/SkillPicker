@@ -9,10 +9,11 @@ namespace SkillPicker.ViewModel
         private ISkillPickerModel _model;
 
         private SkillViewModel _skillViewModel;
+        private StuntImageViewModel _stuntImageViewModel;
 
         private String _searchText = "";
         private List<SkillViewModel> _searchedSkills;
-        private ObservableCollection<StuntPicture> _stuntPictures;
+        private ObservableCollection<StuntImageViewModel> _stuntImages;
 
         private Int32 _warmUps = 4;
         private Int32 _learnings = 1;
@@ -35,6 +36,19 @@ namespace SkillPicker.ViewModel
                 if (_skillViewModel != value)
                 {
                     _skillViewModel = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public StuntImageViewModel StuntImageViewModel
+        {
+            get { return _stuntImageViewModel; }
+            set
+            {
+                if (_stuntImageViewModel != value)
+                {
+                    _stuntImageViewModel = value;
                     OnPropertyChanged();
                 }
             }
@@ -65,14 +79,14 @@ namespace SkillPicker.ViewModel
             }
         }
 
-        public ObservableCollection<StuntPicture> StuntPictures
+        public ObservableCollection<StuntImageViewModel> StuntImages
         {
-            get { return _stuntPictures; }
+            get { return _stuntImages; }
             private set
             {
-                if (_stuntPictures != value)
+                if (_stuntImages != value)
                 {
-                    _stuntPictures = value;
+                    _stuntImages = value;
                     OnPropertyChanged();
                 }
             }
@@ -171,10 +185,19 @@ namespace SkillPicker.ViewModel
         public DelegateCommand DeleteSkillCommand { get; private set; }
         public DelegateCommand DowngradeSkillCommand { get; private set; }
         public DelegateCommand UpgradeSkillCommand { get; private set; }
+        public DelegateCommand PickAnImageCommand { get; private set; }
+        public DelegateCommand TakeAPictureCommand { get; private set; }
+        public DelegateCommand NewImageCommand { get; private set; }
+        public DelegateCommand DeleteImageCommand { get; private set; }
+        public DelegateCommand AddImageToGalleryCommand { get; private set; }
+        public DelegateCommand ManageLabelsCommand { get; private set; }
 
         public event EventHandler<ApplicationMessageEventArgs>? ApplicationMessaged;
         public event EventHandler? LoadSkills;
         public event EventHandler? SaveSkills;
+        public event EventHandler? NewImage;
+        public event EventHandler? ImageAddedToGallery;
+        public event EventHandler? ManageLabels;
         #endregion
 
 
@@ -184,18 +207,21 @@ namespace SkillPicker.ViewModel
             _model.SkillsChanged += new EventHandler<SkillsChangedEventArgs>(Model_SkillsChanged);
             _model.PracticeChanged += new EventHandler<PracticeChangedEventArgs>(Model_PracticeChanged);
             _model.PracticeSkillsChanged += new EventHandler<PracticeChangedEventArgs>(Model_PracticeSkillsChanged);
+            _model.StuntImagesChanged += new EventHandler<StuntImagesChangedEventArgs>(Model_StuntImagesChanged);
             _model.RandomSkillPicked += new EventHandler(Model_RandomSkillPicked);
 
             _skillViewModel = new SkillViewModel();
+            _stuntImageViewModel = new StuntImageViewModel();
 
             _searchedSkills = new List<SkillViewModel>();
-            _stuntPictures = new ObservableCollection<StuntPicture>(GetStuntPictures());
 
             _warmUpFields = new ObservableCollection<FieldViewModel>();
             _learningFields = new ObservableCollection<FieldViewModel>();
             
             _warmUpSkills = new ObservableCollection<SkillViewModel>();
             _learningSkills = new ObservableCollection<SkillViewModel>();
+
+            StuntImages = new ObservableCollection<StuntImageViewModel>();
 
             SearchSkillCommand = new DelegateCommand(param => OnSearchSkill(param as String));
             GenerateCommand = new DelegateCommand(param => GenerateFields());
@@ -207,6 +233,13 @@ namespace SkillPicker.ViewModel
             DeleteSkillCommand = new DelegateCommand(param => OnDeleteSkill(param as SkillViewModel));
             DowngradeSkillCommand = new DelegateCommand(param => OnDowngradeSkill(param as SkillViewModel));
             UpgradeSkillCommand = new DelegateCommand(param => OnUpgradeSkill(param as SkillViewModel));
+            ManageLabelsCommand = new DelegateCommand(param => OnManageLabels());
+            NewImageCommand = new DelegateCommand(param => OnNewImage());
+            PickAnImageCommand = new DelegateCommand(param => OnPickAnImageCommand());
+            TakeAPictureCommand = new DelegateCommand(param => OnTakeAPictureCommand());
+            AddImageToGalleryCommand = new DelegateCommand(param => OnAddImageToGalleryCommand());
+            DeleteImageCommand = new DelegateCommand(param => OnDeleteImageCommand(param as StuntImageViewModel));
+
         }
         #endregion
 
@@ -281,6 +314,21 @@ namespace SkillPicker.ViewModel
             {
                 LearningFields[idx].Skill = practiceLearningList[idx].Name;
                 LearningFields[idx].Label = practiceLearningList[idx].Label;
+            }
+        }
+
+        private void Model_StuntImagesChanged(object? sender, StuntImagesChangedEventArgs e)
+        {
+            StuntImages = new ObservableCollection<StuntImageViewModel>();
+            foreach (StuntImage si in e.StuntImages)
+            {
+                StuntImages.Add(new StuntImageViewModel
+                {
+                    Stunt = si.Stunt,
+                    Protagonist = si.Protagonist,
+                    Filename = si.Filename,
+                    ImageUrl = si.ImageUrl,
+                });
             }
         }
 
@@ -361,33 +409,79 @@ namespace SkillPicker.ViewModel
             SaveSkills?.Invoke(this, EventArgs.Empty);
         }
 
-        private void OnApplicationMessaged(String message, MessageType type)
-        {
-            ApplicationMessaged?.Invoke(this, new ApplicationMessageEventArgs { Message = message, Type = type });
+        private void OnManageLabels()
+        { 
+            ManageLabels?.Invoke(this, EventArgs.Empty);
         }
 
-        private List<StuntPicture> GetStuntPictures()
+        private void OnNewImage()
         {
-            List<StuntPicture> pictures = new List<StuntPicture>();
-
-            pictures.Add(new StuntPicture{ Text = "Handstand\n(Hanó)", ImageUrl = "handstand.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Handstand Liberty\n(Hanó)", ImageUrl = "handstandlib.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Handstand Split\n(Hanó)", ImageUrl = "handstandsplit.jpg" });
-            pictures.Add(new StuntPicture{ Text = "High V\n(Elise)", ImageUrl = "elise_hands.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Heartform\n(Elise)", ImageUrl = "elise_blokk.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Pretty Girl\n(Elise)", ImageUrl = "elise_prettygirl.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Right Liberty\n(Hanó)", ImageUrl = "jlib.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Left Liberty\n(Hanó)", ImageUrl = "blib.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Right Cupie\n(Hanó)", ImageUrl = "jcupie.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Left Cupie\n(Hanó)", ImageUrl = "bcupie.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Right Stretch\n(Hanó)", ImageUrl = "jstretch.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Left Stretch\n(Hanó)", ImageUrl = "bstretch.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Arabesk\n(Hanó)", ImageUrl = "arabesk.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Scorpion\n(Hanó)", ImageUrl = "scorpion.jpg" });
-            pictures.Add(new StuntPicture{ Text = "Bow & Arrow\n(Hanó)", ImageUrl = "bowandarrow.jpg" });
-
-            return pictures;
+            NewImage?.Invoke(this, EventArgs.Empty);
         }
+
+        private async void OnPickAnImageCommand()
+        {
+            FileResult? image = await FilePicker.PickAsync(new PickOptions
+            {
+                PickerTitle = "Pick an Image",
+                FileTypes = FilePickerFileType.Images
+            });
+
+            if (image == null)
+                return;
+
+            StuntImageViewModel.Bytes = File.ReadAllBytes(image.FullPath);
+            StuntImageViewModel.Filename = image.FileName;
+        }
+
+        private async void OnTakeAPictureCommand()
+        {
+            FileResult? photo = await MediaPicker.Default.CapturePhotoAsync(new MediaPickerOptions
+            { 
+                Title = "Take a Picture"
+            });
+
+            if (photo == null)
+                return;
+            
+            StuntImageViewModel.Bytes = File.ReadAllBytes(photo.FullPath);
+            StuntImageViewModel.Filename = photo.FileName;
+        }
+
+        private async void OnAddImageToGalleryCommand()
+        {
+            if (StuntImageViewModel.Bytes == null || String.IsNullOrEmpty(StuntImageViewModel.Filename)
+                || StuntImages.Count >= 10)
+                return;
+
+            ImageAddedToGallery?.Invoke(this, EventArgs.Empty);
+
+            await _model.AddStuntImageAsync(new StuntImage
+            {
+                Stunt = StuntImageViewModel.Stunt,
+                Protagonist = StuntImageViewModel.Protagonist,
+                Filename = StuntImageViewModel.Filename,
+            }, StuntImageViewModel.Bytes);
+
+            StuntImageViewModel = new StuntImageViewModel();
+        }
+
+        private void OnDeleteImageCommand(StuntImageViewModel image)
+        {
+            if (StuntImages.Count > 1)
+            {
+                StuntImages.Remove(image);
+
+                _model.DeleteStuntImage(new StuntImage
+                {
+                    ImageUrl = image.ImageUrl,
+                    Filename = image.Filename,
+                    Stunt = image.Stunt,
+                    Protagonist = image.Protagonist,
+                });
+            }
+        }
+
         #endregion
     }
 }

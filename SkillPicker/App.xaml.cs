@@ -1,5 +1,4 @@
-﻿using SkillPicker.ViewModel;
-using SkillPicker.Model;
+﻿using SkillPicker.Model;
 using SkillPicker.Persistence;
 
 namespace SkillPicker
@@ -16,7 +15,7 @@ namespace SkillPicker
         {
             InitializeComponent();
 
-            _persistence = new SkillPickerTextFileDataAccess();
+            _persistence = new SkillPickerFileDataAccess();
             _model = new SkillPickerModel(_persistence);
 
             MainPage = new AppShell(_model);
@@ -34,8 +33,15 @@ namespace SkillPicker
                 {
                     await _model.LoadSkillsAsync(
                         Path.Combine(FileSystem.AppDataDirectory, "SuspendedSkills"));
+
+                    await _model.LoadImagesAsync(
+                        Path.Combine(FileSystem.AppDataDirectory, "SuspendedImages"));
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Equals("Error occurred during reading Images."))
+                        _model.InitStuntImages();
+                }
             };
 
             window.Resumed += async (s, e) =>
@@ -46,10 +52,17 @@ namespace SkillPicker
                     {
                         await _model.LoadSkillsAsync(
                             Path.Combine(FileSystem.AppDataDirectory, "SuspendedSkills"));
+
+                        await _model.LoadImagesAsync(
+                            Path.Combine(FileSystem.AppDataDirectory, "SuspendedImages"));
                         _wasStopped = false;
                     }
                 }
-                catch { }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Equals("Error occurred during reading Images."))
+                        _model.InitStuntImages();
+                }
             };
 
             window.Stopped += async (s, e) =>
@@ -58,6 +71,8 @@ namespace SkillPicker
                 {
                     await _model.SaveSkillsAsync(
                         Path.Combine(FileSystem.AppDataDirectory, "SuspendedSkills"));
+                    await _model.SaveImagesAsync(
+                        Path.Combine(FileSystem.AppDataDirectory, "SuspendedImages"));
                     _wasStopped = true;
                 }
                 catch { }
