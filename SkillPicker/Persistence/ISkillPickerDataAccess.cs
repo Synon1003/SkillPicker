@@ -2,8 +2,8 @@
 {
     public interface ISkillPickerDataAccess
     {
-        Task<List<String>> LoadSkillsAsync(String path);
-        Task SaveSkillsAsync(String path, List<String> values);
+        Task<Tuple<List<String>, List<String>>> LoadSkillsAsync(String path);
+        Task SaveSkillsAsync(String path, List<String> skills, List<String> labels);
         Task<List<String>> LoadImagesAsync(String path);
         Task SaveImagesAsync(String path, List<String> imageTexts);
         void DeleteImage(String imageUrl);

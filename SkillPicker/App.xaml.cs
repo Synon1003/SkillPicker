@@ -33,7 +33,18 @@ namespace SkillPicker
                 {
                     await _model.LoadSkillsAsync(
                         Path.Combine(FileSystem.AppDataDirectory, "SuspendedSkills"));
+                }
+                catch (Exception ex)
+                {
+                    if (ex.Message.Equals("Error occurred during reading Skills."))
+                    {
+                        _model.InitSkills();
+                        _model.InitPracticeLabels();
+                    }
+                }
 
+                try
+                {
                     await _model.LoadImagesAsync(
                         Path.Combine(FileSystem.AppDataDirectory, "SuspendedImages"));
                 }
@@ -46,22 +57,34 @@ namespace SkillPicker
 
             window.Resumed += async (s, e) =>
             {
-                try
+                if (_wasStopped)
                 {
-                    if (_wasStopped)
+                    try
                     {
                         await _model.LoadSkillsAsync(
                             Path.Combine(FileSystem.AppDataDirectory, "SuspendedSkills"));
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex.Message.Equals("Error occurred during reading Skills."))
+                        { 
+                            _model.InitSkills();
+                            _model.InitPracticeLabels();
+                        }
+                    }
 
+                    try
+                    {
                         await _model.LoadImagesAsync(
                             Path.Combine(FileSystem.AppDataDirectory, "SuspendedImages"));
-                        _wasStopped = false;
                     }
-                }
-                catch (Exception ex)
-                {
-                    if (ex.Message.Equals("Error occurred during reading Images."))
-                        _model.InitStuntImages();
+                    catch (Exception ex)
+                    {
+                        if (ex.Message.Equals("Error occurred during reading Images."))
+                            _model.InitStuntImages();
+                    }
+
+                    _wasStopped = false;
                 }
             };
 
@@ -71,11 +94,17 @@ namespace SkillPicker
                 {
                     await _model.SaveSkillsAsync(
                         Path.Combine(FileSystem.AppDataDirectory, "SuspendedSkills"));
-                    await _model.SaveImagesAsync(
-                        Path.Combine(FileSystem.AppDataDirectory, "SuspendedImages"));
-                    _wasStopped = true;
                 }
                 catch { }
+
+                try
+                {
+                    await _model.SaveImagesAsync(
+                        Path.Combine(FileSystem.AppDataDirectory, "SuspendedImages"));
+                }
+                catch { }
+
+                _wasStopped = true;
             };
 
             return window;

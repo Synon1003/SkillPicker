@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:view="clr-namespace:SkillPicker.View"
+             xmlns:mct="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+             xmlns:local="clr-namespace:SkillPicker.ViewModel"
+             x:Class="SkillPicker.View.PracticeLabelsPage"
+             Title="Practice Labels">
+
+    <ContentPage.Resources>
+        <ResourceDictionary Source="SkillPickerResources.xaml" />
+    </ContentPage.Resources>
+    <ContentPage.Behaviors>
+        <mct:StatusBarBehavior StatusBarColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"
+                       StatusBarStyle="{AppThemeBinding Light=DarkContent, Dark=LightContent}" />
+    </ContentPage.Behaviors>
+
+
+    <ScrollView>
+        <Border Style="{StaticResource borderStyle}" Margin="20,10,20,10">
+            <Grid ColumnDefinitions="0.5*,0.5*" RowDefinitions="*,50" RowSpacing="5" ColumnSpacing="10" Padding="10,5,10,5">
+                <Grid Grid.Column="0" ColumnDefinitions="1.2*,3.8*" RowDefinitions="50,50,50,50,50,50,50,50,50" RowSpacing="5" Padding="10,10,10,10">
+                    <Label Text="W1:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="0" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[0]}" Grid.Column="1" Grid.Row="0" />
+
+                    <Label Text="W2:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="1" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[1]}" Grid.Column="1" Grid.Row="1" />
+
+                    <Label Text="W3:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="2" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[2]}" Grid.Column="1" Grid.Row="2" />
+
+                    <Label Text="W4:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="3" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[3]}" Grid.Column="1" Grid.Row="3" />
+
+                    <Label Text="W5:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="4" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[4]}" Grid.Column="1" Grid.Row="4" />
+
+                    <Label Text="W6:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="5" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[5]}" Grid.Column="1" Grid.Row="5" />
+
+                    <Label Text="W7:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="6" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[6]}" Grid.Column="1" Grid.Row="6" />
+
+                    <Label Text="W8:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="7" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[7]}" Grid.Column="1" Grid.Row="7" />
+
+                    <Label Text="W9:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="8" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[8]}" Grid.Column="1" Grid.Row="8" />
+                </Grid>
+
+                <Grid Grid.Column="1" ColumnDefinitions="1*,4*" RowDefinitions="50,50,50,50,50,50,50,50,50" RowSpacing="5" Padding="10,10,10,10">
+                    <Label Text="L1:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="0" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[9]}" Grid.Column="1" Grid.Row="0" />
+
+                    <Label Text="L2:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="1" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[10]}" Grid.Column="1" Grid.Row="1" />
+
+                    <Label Text="L3:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="2" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[11]}" Grid.Column="1" Grid.Row="2" />
+
+                    <Label Text="L4:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="3" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[12]}" Grid.Column="1" Grid.Row="3" />
+
+                    <Label Text="L5:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="4" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[13]}" Grid.Column="1" Grid.Row="4" />
+
+                    <Label Text="L6:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="5" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[14]}" Grid.Column="1" Grid.Row="5" />
+
+                    <Label Text="L7:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="6" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[15]}" Grid.Column="1" Grid.Row="6" />
+
+                    <Label Text="L8:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="7" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[16]}" Grid.Column="1" Grid.Row="7" />
+
+                    <Label Text="L9:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="8" VerticalTextAlignment="Center" />
+                    <Picker ItemsSource="{Binding SkillLabels}" HeightRequest="40" SelectedItem="{Binding PracticeLabels[17]}" Grid.Column="1" Grid.Row="8" />
+
+                </Grid>
+                <Button Text="Save Labels" Command="{Binding SetLabelsCommand}" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.Column="0" Grid.Row="1" />
+                <Button Text="Reset Labels" Command="{Binding ResetLabelsCommand}" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.Column="1" Grid.Row="1" />
+            </Grid>
+        </Border>
+    </ScrollView>
+</ContentPage>

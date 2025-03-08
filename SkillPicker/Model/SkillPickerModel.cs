@@ -6,11 +6,13 @@ namespace SkillPicker.Model
 {
     public class SkillPickerModel : ISkillPickerModel, IDisposable
     {
+        private ISkillPickerDataAccess _dataAccess;
+        private Random _skillGenerator;
+
         private SortedSet<Skill> _skills;
         private List<Skill> _practiceList;
         private List<StuntImage> _stuntImages;
-        private ISkillPickerDataAccess _dataAccess;
-        private Random _skillGenerator;
+        private List<String> _practiceLabels;
 
         private Timer _timer;
         private String _randomSkill = "";
@@ -22,6 +24,7 @@ namespace SkillPicker.Model
         public event EventHandler<PracticeChangedEventArgs>? PracticeChanged;
         public event EventHandler<PracticeChangedEventArgs>? PracticeSkillsChanged;
         public event EventHandler<StuntImagesChangedEventArgs>? StuntImagesChanged;
+        public event EventHandler<PracticeLabelsChangedEventArgs>? PracticeLabelsChanged;
         public event EventHandler? RandomSkillPicked;
 
         public IEnumerable<Skill> Skills { get { return _skills; } set { _skills = new SortedSet<Skill>(value); } }
@@ -30,9 +33,10 @@ namespace SkillPicker.Model
         {
             _dataAccess = dataAccess;
             _skillGenerator = new Random();
-            _skills = new SortedSet<Skill>();
+            _skills = new SortedSet<Skill>(new SkillComparer());
             _practiceList = new List<Skill>();
             _stuntImages = new List<StuntImage>();
+            InitPracticeLabels();
 
             _timer = new Timer(20);
             _timer.Elapsed += new ElapsedEventHandler(Timer_Elapsed);
@@ -156,35 +160,59 @@ namespace SkillPicker.Model
             }
         }
 
+        public void InitSkills()
+        {
+            if (_skills.Count == 0)
+            {
+                _skills.Add(new Skill { Name = "WalkUp to Hands", Label = "Prep", Type = "WarmUp" });
+                _skills.Add(new Skill { Name = "Toss to Hands", Label = "Prep", Type = "WarmUp" });
+                _skills.Add(new Skill { Name = "WalkUp to Platform", Label = "Platform", Type = "WarmUp" });
+                _skills.Add(new Skill { Name = "Toss to Hands -> Platform", Label = "Platform", Type = "WarmUp" });
+                _skills.Add(new Skill { Name = "WalkUp to Liberty", Label = "OneLeg", Type = "WarmUp" });
+                _skills.Add(new Skill { Name = "Toss to Hands -> Liberty", Label = "OneLeg", Type = "WarmUp" });
+
+                _skills.Add(new Skill { Name = "Toss to Platform", Label = "Platform", Type = "Learning" });
+                _skills.Add(new Skill { Name = "Toss Liberty", Label = "OneLeg", Type = "Learning" });
+                _skills.Add(new Skill { Name = "Hands Cupie", Label = "OneArm", Type = "Learning" });
+                _skills.Add(new Skill { Name = "Toss Cupie", Label = "OneArm", Type = "Learning" });
+                _skills.Add(new Skill { Name = "FullUp to Platform", Label = "Spin", Type = "Learning" });
+                _skills.Add(new Skill { Name = "HandInHand", Label = "Inverted", Type = "Learning" });
+            }
+
+            SkillsChanged?.Invoke(this, new SkillsChangedEventArgs(_skills));
+        }
+
         public void InitStuntImages()
         {
             if (_stuntImages.Count == 0)
             { 
                 _stuntImages.Add(new StuntImage { Stunt = "Scorpion", Protagonist = "Hanó", ImageUrl = "scorpion2024.jpg", Filename = "scorpion2024.jpg" });
-                _stuntImages.Add(new StuntImage { Stunt = "Handstand Split", Protagonist = "Hanó", ImageUrl = "handstandsplit2024.jpg", Filename = "handstandsplit2024.jpg" });
+                _stuntImages.Add(new StuntImage { Stunt = "Hand In Hand Split", Protagonist = "Hanó", ImageUrl = "highhandstandsplit2024.jpg", Filename = "highhandstandsplit2024.png" });
                 _stuntImages.Add(new StuntImage { Stunt = "Pretty Girl", Protagonist = "Elise", ImageUrl = "prettygirl2024.jpg", Filename = "prettygirl2024.jpg" });
-
             }
 
             StuntImagesChanged?.Invoke(this, new StuntImagesChangedEventArgs(_stuntImages));
         }
 
-
-        private List<String> GetLearningLabels(List<String> pickableLabels)
+        public void InitPracticeLabels() 
         {
-            List<String> learningLabels = new List<String>();
-            learningLabels.Add(pickableLabels[1]);
-            learningLabels.AddRange(pickableLabels.GetRange(4, 2));
-            learningLabels.Add(pickableLabels[_skillGenerator.Next(2, 4)]);
-            learningLabels.Add(pickableLabels[_skillGenerator.Next(6, 9)]);
-            
-            return learningLabels;
+            _practiceLabels = Skill.GetLabels().GetRange(0, 9);
+            _practiceLabels.AddRange(Skill.GetLabels().GetRange(1, 9));
+
+            PracticeLabelsChanged?.Invoke(this, new PracticeLabelsChangedEventArgs(_practiceLabels));
         }
+
+        public void SetLabels(List<String> newLabels)
+        {
+            for (int idx = 0; idx < newLabels.Count && idx < _practiceLabels.Count; idx++)
+                _practiceLabels[idx] = newLabels[idx];
+        }
+
 
         public void GeneratePractice(Int32 warmUps, Int32 learnings)
         {
-            List<String> warmUpLabels = Skill.GetLabels().GetRange(0,9);
-            List<String> learningLabels = GetLearningLabels(Skill.GetLabels().GetRange(0,9));
+            List<String> warmUpLabels = _practiceLabels.GetRange(0, 9);
+            List<String> learningLabels = _practiceLabels.GetRange(9, 9);
 
             if (warmUps != _practiceList.Where(s => s.Type == "WarmUp").Count() ||
                 learnings != _practiceList.Where(s => s.Type == "Learning").Count())
@@ -199,7 +227,7 @@ namespace SkillPicker.Model
                     _practiceList.Add(new Skill
                     {
                         Label = warmUpLabels[idx],
-                        Name = skillCount > 0 ? warmUpSkillsByLabel[_skillGenerator.Next(0, skillCount)].Name : "<No Skill>",
+                        Name = skillCount > 0 ? warmUpSkillsByLabel[_skillGenerator.Next(0, skillCount)].Name : "<No Skill Yet>",
                         Type = "WarmUp",
                     });
                 }
@@ -212,7 +240,7 @@ namespace SkillPicker.Model
                     _practiceList.Add(new Skill 
                     {
                         Label = learningLabels[idx],
-                        Name = skillCount > 0 ? learningSkillsByLabel[_skillGenerator.Next(0, skillCount)].Name : "<No Skill>",
+                        Name = skillCount > 0 ? learningSkillsByLabel[_skillGenerator.Next(0, skillCount)].Name : "<No Skill Yet>",
                         Type = "Learning",
                     });
                 }
@@ -226,7 +254,7 @@ namespace SkillPicker.Model
                     List<Skill> warmUpSkillsByLabel = Skills.Where(s => s.Label == warmUpLabels[idx] && s.Type == "WarmUp").ToList();
                     Int32 skillCount = warmUpSkillsByLabel.Count;
 
-                    _practiceList[idx].Name = skillCount > 0 ? warmUpSkillsByLabel[_skillGenerator.Next(0, skillCount)].Name : "<No Skill>";
+                    _practiceList[idx].Name = skillCount > 0 ? warmUpSkillsByLabel[_skillGenerator.Next(0, skillCount)].Name : "<No Skill Yet>";
                     _practiceList[idx].Label = warmUpLabels[idx];
                 }
 
@@ -235,7 +263,7 @@ namespace SkillPicker.Model
                     List<Skill> learningSkillsByLabel = Skills.Where(s => s.Label == learningLabels[idx] && s.Type == "Learning").ToList();
                     Int32 skillCount = learningSkillsByLabel.Count;
 
-                    _practiceList[idx + warmUps].Name = skillCount > 0 ? learningSkillsByLabel[_skillGenerator.Next(0, skillCount)].Name : "<No Skill>";
+                    _practiceList[idx + warmUps].Name = skillCount > 0 ? learningSkillsByLabel[_skillGenerator.Next(0, skillCount)].Name : "<No Skill Yet>";
                     _practiceList[idx + warmUps].Label = learningLabels[idx];
                 }
 
@@ -248,8 +276,9 @@ namespace SkillPicker.Model
             if (_dataAccess == null)
                 return;
 
-            List<String> skillTexts = await _dataAccess.LoadSkillsAsync(path);
+            Tuple<List<String>, List<String>> dataTexts = await _dataAccess.LoadSkillsAsync(path);
 
+            List<String> skillTexts = dataTexts.Item1;
             _skills = new SortedSet<Skill>(new SkillComparer());
             foreach (String skillText in skillTexts)
             {
@@ -260,6 +289,13 @@ namespace SkillPicker.Model
             }
 
             SkillsChanged?.Invoke(this, new SkillsChangedEventArgs(_skills));
+
+
+            List<String> savedPracticeLabels = dataTexts.Item2;
+            for (int idx = 0; idx < savedPracticeLabels.Count && idx < _practiceLabels.Count; idx++)
+                _practiceLabels[idx] = savedPracticeLabels[idx];
+
+            PracticeLabelsChanged?.Invoke(this, new PracticeLabelsChangedEventArgs(_practiceLabels));
         }
 
         public async Task SaveSkillsAsync(String path)
@@ -276,7 +312,7 @@ namespace SkillPicker.Model
                 skillTexts.Add(skill.ToString());
             }
 
-            await _dataAccess.SaveSkillsAsync(path, skillTexts);
+            await _dataAccess.SaveSkillsAsync(path, skillTexts, _practiceLabels);
         }
 
         public async Task LoadImagesAsync(String path)

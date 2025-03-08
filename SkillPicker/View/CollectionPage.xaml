@@ -17,12 +17,14 @@
     </ContentPage.Behaviors>
 
     <ScrollView>
-        <VerticalStackLayout Padding="20,10" Spacing="15">
-            <CarouselView ItemsSource="{Binding StuntImages}" IndicatorView="indicatorView" HeightRequest="366" VerticalOptions="Center">
+        <Grid RowDefinitions="*,28,*" Padding="20,10" RowSpacing="15">
+            <CarouselView ItemsSource="{Binding StuntImages}" IndicatorView="indicatorView" VerticalOptions="Center" x:Name="CollectionImageContainer">
                 <CarouselView.ItemTemplate>
                     <DataTemplate x:DataType="local:StuntImageViewModel">
-                        <StackLayout>
-                            <Border Style="{StaticResource borderStyle}" HorizontalOptions="Center" VerticalOptions="Center">
+                        <Grid RowDefinitions="*,44">
+                            <Border Style="{StaticResource borderStyle}" HorizontalOptions="Center" VerticalOptions="Center" Grid.Row="0"
+                                    WidthRequest="{Binding Source={x:Reference CollectionImageContainer}, Path=Width}" 
+                                    HeightRequest="{Binding Source={x:Reference CollectionImageContainer}, Path=Width}">
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer NumberOfTapsRequired="2" CommandParameter="{Binding}"
                                         Command="{Binding BindingContext.DeleteImageCommand, Source={RelativeSource AncestorType={x:Type CarouselView}}}"/>
@@ -31,29 +33,36 @@
                                 <Image 
                                     Source="{Binding ImageUrl}"
                                     Aspect="AspectFill"
-                                    HeightRequest="320"
-                                    WidthRequest="320"
-                                    HorizontalOptions="Center"
                                 />
                             </Border>
                             <Label
+                                Grid.Row="1"
                                 Text="{Binding Text}"
                                 HorizontalTextAlignment="Center"
                                 FontSize="16"
-                                MaxLines="2" />       
-                        </StackLayout>
+                                MaxLines="2" />
+                        </Grid>
                     </DataTemplate>
                 </CarouselView.ItemTemplate>
+                <CarouselView.EmptyView>
+                    <Border Style="{StaticResource borderStyle}" HorizontalOptions="Center" VerticalOptions="Center" Margin="0,0,0,44"
+                            WidthRequest="{Binding Source={x:Reference CollectionImageContainer}, Path=Width}" 
+                            HeightRequest="{Binding Source={x:Reference CollectionImageContainer}, Path=Width}">
+                        <Image 
+                            Source="empty.png"
+                            Aspect="AspectFill"
+                        />
+                    </Border>
+                </CarouselView.EmptyView>
             </CarouselView>
             <IndicatorView 
+                Grid.Row="1"
                 x:Name="indicatorView"
                 IndicatorColor="{StaticResource Gray100}"
                 SelectedIndicatorColor="{AppThemeBinding Light={StaticResource PrimaryDark},Dark={StaticResource PrimaryDark}}"
                 HorizontalOptions="Center" 
-                Margin="0,0,0,20"
             />
-            
-            <StackLayout>
+            <StackLayout Grid.Row="2">
                 <SearchBar x:Name="searchBar"
                     Placeholder="Search skills..."
                     Text="{Binding SearchText}"
@@ -61,11 +70,11 @@
                     SearchCommandParameter="{Binding Text, Source={x:Reference searchBar}}"
                     SearchButtonPressed="OnSearchButtonPressed"
                 />
-                <ListView ItemsSource="{Binding SearchedSkills}" Margin="0,15,0,15" HasUnevenRows="True">
+                <ListView ItemsSource="{Binding SearchedSkills}" Margin="0,15,0,15" HasUnevenRows="True" SelectionMode="None">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:SkillViewModel">
                             <ViewCell>
-                                <Grid ColumnDefinitions="3*,2*,*" ColumnSpacing="5">
+                                <Grid ColumnDefinitions="2*,*,*" ColumnSpacing="5" Padding="2,0,2,0">
                                     <Label Text="{Binding Text}" Grid.Column="0" VerticalOptions="Center" Padding="0,5,0,5" />
                                     <Label Text="{Binding Label}" Grid.Column="1" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{AppThemeBinding Light={StaticResource Gray400},Dark={StaticResource Gray400}}" />
                                     <Label Text="{Binding Type}" Grid.Column="2" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{AppThemeBinding Light={StaticResource Gray200},Dark={StaticResource Gray200}}" />
@@ -75,7 +84,7 @@
                     </ListView.ItemTemplate>
                 </ListView>
             </StackLayout>
-        </VerticalStackLayout>
+        </Grid>
     </ScrollView>
 
 </ContentPage>

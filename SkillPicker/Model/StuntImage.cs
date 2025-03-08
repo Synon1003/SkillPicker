@@ -27,6 +27,9 @@
 
         public override String ToString()
         {
+            if (String.IsNullOrEmpty(Filename))
+                return "";
+
             return Stunt + ':' + Protagonist + ':' + Filename + ':' + ImageUrl;
         }
     }

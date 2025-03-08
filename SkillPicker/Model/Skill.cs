@@ -17,7 +17,7 @@
         }
         public enum SkillLabel
         {
-            Hands,
+            Prep,
             Platform,
             OneLeg,
             OneArm,
@@ -60,7 +60,7 @@
             {
                 switch (_label)
                 {
-                    case SkillLabel.Hands: return "Hands";
+                    case SkillLabel.Prep: return "Prep";
                     case SkillLabel.Platform: return "Platform";
                     case SkillLabel.OneLeg: return "OneLeg";
                     case SkillLabel.OneArm: return "OneArm";
@@ -78,7 +78,7 @@
             {
                 switch (value)
                 {
-                    case "Hands": _label = SkillLabel.Hands; break;
+                    case "Prep": _label = SkillLabel.Prep; break;
                     case "Platform": _label = SkillLabel.Platform; break;
                     case "OneLeg": _label = SkillLabel.OneLeg; break;
                     case "OneArm": _label = SkillLabel.OneArm; break;

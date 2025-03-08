@@ -2,18 +2,21 @@
 {
     public class SkillPickerFileDataAccess : ISkillPickerDataAccess
     {
-        public async Task<List<String>> LoadSkillsAsync(String path)
+        public async Task<Tuple<List<String>, List<String>>> LoadSkillsAsync(String path)
         {
-            if (path == null)
-                throw new ArgumentNullException("path");
-
             try
             {
                 using (StreamReader reader = new StreamReader(path))
                 {
-                    List<String> skillTexts = (await reader.ReadToEndAsync()).Split(",").ToList();
+                    String skillsData = await reader.ReadToEndAsync();
+                    if (String.IsNullOrEmpty(skillsData))
+                        throw new Exception("Empty file.");
 
-                    return skillTexts;
+                    String[] data = skillsData.Split(";");
+                    List<String> skillTexts = data[0].Split(",").ToList();
+                    List<String> labelTexts = data[1].Split(",").ToList();
+
+                    return new Tuple<List<String>,List<String>>(skillTexts, labelTexts);
 
                 }
             }
@@ -23,18 +26,15 @@
             }
         }
 
-        public async Task SaveSkillsAsync(String path, List<String> skillTexts)
+        public async Task SaveSkillsAsync(String path, List<String> skillTexts, List<String> labelTexts)
         {
-            if (path == null)
-                throw new ArgumentNullException("path");
-            if (skillTexts == null || skillTexts.Count == 0)
-                throw new ArgumentNullException("skillTexts");
-
             try
             {
                 using (StreamWriter writer = new StreamWriter(path))
                 {
                     await writer.WriteAsync(skillTexts.Aggregate((value1, value2) => value1 + "," + value2));
+                    await writer.WriteAsync(';');
+                    await writer.WriteAsync(labelTexts.Aggregate((value1, value2) => value1 + "," + value2));
                 }
             }
             catch (Exception ex)
@@ -45,14 +45,15 @@
 
         public async Task<List<String>> LoadImagesAsync(String path)
         {
-            if (path == null)
-                throw new ArgumentNullException("path");
-
             try
             {
                 using (StreamReader reader = new StreamReader(path))
                 {
-                    List<String> imageTexts = (await reader.ReadToEndAsync()).Split(",").ToList();
+                    String imagesData = await reader.ReadToEndAsync();
+                    if (String.IsNullOrEmpty(imagesData))
+                        throw new Exception("Empty file.");
+
+                    List<String> imageTexts = imagesData.Split(",").ToList();
 
                     return imageTexts;
                 }
@@ -65,11 +66,6 @@
 
         public async Task SaveImagesAsync(String path, List<String> imageTexts)
         {
-            if (path == null)
-                throw new ArgumentNullException("path");
-            if (imageTexts == null || imageTexts.Count == 0)
-                throw new ArgumentNullException("imageTexts");
-
             try
             {
                 using (StreamWriter writer = new StreamWriter(path))
@@ -85,24 +81,38 @@
 
         public void DeleteImage(String imageUrl)
         {
-            string filePath = Path.Combine(FileSystem.AppDataDirectory, imageUrl);
-
-            if (File.Exists(filePath))
+            try
             {
-                File.Delete(filePath);
+                string filePath = Path.Combine(FileSystem.AppDataDirectory, imageUrl);
+
+                if (File.Exists(filePath))
+                {
+                    File.Delete(filePath);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error occurred during deleting the Image.");
             }
         }
 
         public async Task<String> CreateImage(String filename, byte[] imageBytes)
         {
-            string filePath = Path.Combine(FileSystem.AppDataDirectory, filename);
-
-            if (!File.Exists(filePath))
+            try
             {
-                await File.WriteAllBytesAsync(filePath, imageBytes);
-            }
+                string filePath = Path.Combine(FileSystem.AppDataDirectory, filename);
 
-            return filePath;
+                if (!File.Exists(filePath))
+                {
+                    await File.WriteAllBytesAsync(filePath, imageBytes);
+                }
+
+                return filePath;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("Error occurred during creating the Image.");
+            }
         }
     }
 }

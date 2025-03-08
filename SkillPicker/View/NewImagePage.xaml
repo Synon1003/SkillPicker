@@ -2,6 +2,7 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:mct="clr-namespace:CommunityToolkit.Maui.Behaviors;assembly=CommunityToolkit.Maui"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:local="clr-namespace:SkillPicker.ViewModel"
              x:DataType="local:SkillPickerViewModel"
              x:Class="SkillPicker.View.NewImagePage"
@@ -9,7 +10,7 @@
 
     <ContentPage.Resources>
         <ResourceDictionary Source="SkillPickerResources.xaml" />
-        <local:BytesToImageConverter x:Key="ToImage" />
+        <toolkit:ByteArrayToImageSourceConverter x:Key="ByteArrayToImageSourceConverter" />
     </ContentPage.Resources>
     <ContentPage.Behaviors>
         <mct:StatusBarBehavior StatusBarColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}"
@@ -17,38 +18,33 @@
     </ContentPage.Behaviors>
 
     <ScrollView>
-        <VerticalStackLayout>
-            <Border Style="{StaticResource borderStyle}" Margin="20,10,20,10">
-                <Grid RowDefinitions="50,345,215" Padding="10,5,10,5" RowSpacing="5">
-                    <Grid ColumnSpacing="10" ColumnDefinitions="*,*" Grid.Row="0">
-                        <Button Text="Take a Picture" Command="{Binding TakeAPictureCommand}" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.Column="0" Grid.Row="0" />
-                        <Button Text="Pick an Image" Command="{Binding PickAnImageCommand}" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.Column="1" Grid.Row="0" />
-                    </Grid>
+        <Border Style="{StaticResource borderStyle}" Margin="20,10,20,10">
+            <Grid RowDefinitions="50,*,160" Padding="10,5,10,5" RowSpacing="5">
+                <Grid ColumnSpacing="10" ColumnDefinitions="*,*" Grid.Row="0">
+                    <Button Text="Take a Picture" Command="{Binding TakeAPictureCommand}" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.Column="0" Grid.Row="0" />
+                    <Button Text="Pick an Image" Command="{Binding PickAnImageCommand}" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.Column="1" Grid.Row="0" />
+                </Grid>
 
-                    <Border Grid.Row="1" Style="{StaticResource borderStyle}" HorizontalOptions="Center" VerticalOptions="Center">
+                <Grid Grid.Row="1" x:Name="NewImageContainer" >
+                    <Border Style="{StaticResource borderStyle}" HorizontalOptions="Center" VerticalOptions="Center" 
+                            WidthRequest="{Binding Source={x:Reference NewImageContainer}, Path=Width}" HeightRequest="{Binding Source={x:Reference NewImageContainer}, Path=Width}">
                         <Image 
-                            Source="{Binding StuntImageViewModel.Bytes, Converter={StaticResource ToImage}}"
+                            Source="{Binding StuntImageViewModel.Bytes, Converter={StaticResource ByteArrayToImageSourceConverter}}"
                             Aspect="AspectFill"
-                            HeightRequest="320"
-                            WidthRequest="320"
-                            HorizontalOptions="Center"
                         />
                     </Border>
-
-                    <Grid Grid.Row="2" ColumnDefinitions="0.3*, 0.7*" RowDefinitions="50,50,50,50" RowSpacing="5">
-                        <Label Text="File:" Grid.Column="0" Grid.Row="0" VerticalTextAlignment="Center" />
-                        <Entry Text="{Binding StuntImageViewModel.Filename}" Grid.Column="1" Grid.Row="0" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" />
-                        
-                        <Label Text="Stunt:" Grid.Column="0" Grid.Row="1" VerticalTextAlignment="Center" />
-                        <Entry Text="{Binding StuntImageViewModel.Stunt}" HeightRequest="40" Grid.Column="1" Grid.Row="1" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" />
-
-                        <Label Text="Protagonist:" Grid.Column="0" Grid.Row="2" VerticalTextAlignment="Center" />
-                        <Entry Text="{Binding StuntImageViewModel.Protagonist}" HeightRequest="40" Grid.Column="1" Grid.Row="2" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" />
-
-                        <Button Text="Add to Gallery"  Command="{Binding AddImageToGalleryCommand}" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.ColumnSpan="2" Grid.Row="3" />
-                    </Grid>
                 </Grid>
-            </Border>
-        </VerticalStackLayout>
+
+                <Grid Grid.Row="2" ColumnDefinitions="0.3*, 0.7*" RowDefinitions="50,50,50" RowSpacing="5">
+                    <Label Text="Stunt:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="0" VerticalTextAlignment="Center" />
+                    <Entry Text="{Binding StuntImageViewModel.Stunt}" HeightRequest="40" Grid.Column="1" Grid.Row="0" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" />
+
+                    <Label Text="Protagonist:" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="1" VerticalTextAlignment="Center" />
+                    <Entry Text="{Binding StuntImageViewModel.Protagonist}" HeightRequest="40" Grid.Column="1" Grid.Row="1" IsSpellCheckEnabled="False" IsTextPredictionEnabled="False" />
+
+                    <Button Text="Add to Gallery"  Command="{Binding AddImageToGalleryCommand}" Style="{StaticResource ButtonStyle}" HeightRequest="40" Grid.ColumnSpan="2" Grid.Row="2" />
+                </Grid>
+            </Grid>
+        </Border>
     </ScrollView>
 </ContentPage>

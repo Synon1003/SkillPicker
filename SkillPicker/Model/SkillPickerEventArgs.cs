@@ -12,11 +12,11 @@
 
     public class PracticeChangedEventArgs : EventArgs
     {
-        public List<Skill> PracticeList;
+        public List<Skill> Practice;
 
-        public PracticeChangedEventArgs(List<Skill> practiceList)
+        public PracticeChangedEventArgs(List<Skill> practice)
         {
-            PracticeList = practiceList;
+            Practice = practice;
         }
     }
 
@@ -27,6 +27,16 @@
         public StuntImagesChangedEventArgs(List<StuntImage> stuntImages)
         {
             StuntImages = new List<StuntImage>(stuntImages);
+        }
+    }
+
+    public class PracticeLabelsChangedEventArgs : EventArgs
+    {
+        public List<String> PracticeLabels;
+
+        public PracticeLabelsChangedEventArgs(List<String> practiceLabels)
+        {
+            PracticeLabels = practiceLabels;
         }
     }
 }

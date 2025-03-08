@@ -19,17 +19,17 @@
         <Entry x:Name="saveNameEntry" Placeholder="Name of the skill setup ..." />
         <Button Text="Save" Style="{StaticResource ButtonStyle}" Command="{Binding NewSaveCommand}" CommandParameter="{Binding Source={x:Reference saveNameEntry}, Path=Text}" Margin="0,10,0,0" />
 
-        <ListView ItemsSource="{Binding StoredSkills}" Margin="0,10,0,10">
+        <ListView ItemsSource="{Binding StoredSkills}" Margin="0,10,0,10" HasUnevenRows="True">
             <ListView.ItemTemplate>
                 <DataTemplate x:DataType="local:StoredSkillsViewModel">
                     <ViewCell>
-                        <VerticalStackLayout Padding="5,5,5,5">
-                            <Label Text="{Binding Name}" FontSize="Medium" Padding="10,0,10,0">
+                        <VerticalStackLayout Padding="15,15,15,5">
+                            <Label Text="{Binding Name}" FontSize="Medium">
                                 <Label.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding SaveSkillsCommand}" CommandParameter="{Binding Name}" />
                                 </Label.GestureRecognizers>
                             </Label>
-                            <Label Text="{Binding Modified}" Style="{StaticResource ModifiedDateStyle}" />
+                            <Label Text="{Binding Modified}" Style="{StaticResource modifiedDateStyle}" />
                         </VerticalStackLayout>
                     </ViewCell>
                 </DataTemplate>

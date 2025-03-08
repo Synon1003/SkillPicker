@@ -17,25 +17,25 @@
     </ContentPage.Behaviors>
 
     <ScrollView>
-        <Grid RowDefinitions="185,*,60" RowSpacing="5" Padding="20,10,20,10">
+        <Grid RowDefinitions="182,*,60" RowSpacing="5" Padding="20,10,20,10">
             <Border Grid.Row="0" Style="{StaticResource borderStyle}" >
                 <Grid ColumnDefinitions="0.3*, 0.7*" RowDefinitions="50,50,50,50" RowSpacing="5" Padding="10,10,10,10">
-                    <Label Text="{Binding WarmUps, StringFormat='WarmUps:  {0:F0}'}" Grid.Column="0" Grid.Row="0" VerticalOptions="Center" /> 
-                    <Slider Minimum="4" Maximum="9" Value="{Binding WarmUps}" Style="{StaticResource sliderStyle}"  Grid.Column="1" Grid.Row="0" />
+                    <Label Text="{Binding WarmUps, StringFormat='WarmUps:  {0:F0}'}" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="0" VerticalOptions="Center" /> 
+                    <Slider Minimum="1" Maximum="9" Value="{Binding WarmUps}" Style="{StaticResource sliderStyle}"  Grid.Column="1" Grid.Row="0" />
 
-                    <Label Text="{Binding Learnings, StringFormat='Learnings:  {0:F0}'}" Grid.Column="0" Grid.Row="1" VerticalOptions="Center" />
-                    <Slider Minimum="1" Maximum="5" Value="{Binding Learnings}"  Style="{StaticResource sliderStyle}" Grid.Column="1" Grid.Row="1" />
-            
-                    <Button Text="Generate" Style="{StaticResource ButtonStyle}" Grid.ColumnSpan="2" Grid.Row="2" Command="{Binding GenerateCommand}" VerticalOptions="End" />
+                    <Label Text="{Binding Learnings, StringFormat='Learnings:  {0:F0}'}" Style="{StaticResource mainLabelStyle}" Grid.Column="0" Grid.Row="1" VerticalOptions="Center" />
+                    <Slider Minimum="1" Maximum="9" Value="{Binding Learnings}"  Style="{StaticResource sliderStyle}" Grid.Column="1" Grid.Row="1" />
+
+                    <Button Text="Generate" Style="{StaticResource ButtonStyle}" Grid.ColumnSpan="2" Grid.Row="2"  HeightRequest="40" Command="{Binding GenerateCommand}" VerticalOptions="End" />
                 </Grid>
             </Border>
 
-            <VerticalStackLayout Grid.Row="1" Padding="15,10" Spacing="20">
+            <VerticalStackLayout Grid.Row="1" Padding="5,10" Spacing="20">
                 <ListView ItemsSource="{Binding WarmUpFields}" HasUnevenRows="True" >
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:FieldViewModel">
                             <ViewCell>
-                                <Grid ColumnDefinitions="*,8.2*,2.8*" ColumnSpacing="5">
+                                <Grid ColumnDefinitions="1.2*,6*,2.8*" ColumnSpacing="5" Padding="2,0,2,0">
                                     <Label Text="{Binding Row, StringFormat='W{0:F0}:'}" Grid.Column="0" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{StaticResource Gray200}" />
                                     <Label Text="{Binding Label}" Grid.Column="2" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{StaticResource Gray400}" />
                                     <Label Text="{Binding Skill}" Grid.Column="1" VerticalOptions="Center" Padding="0,5,0,5" />
@@ -49,7 +49,7 @@
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="local:FieldViewModel">
                             <ViewCell>
-                                <Grid ColumnDefinitions="*,8.2*,2.8*" ColumnSpacing="5">
+                                <Grid ColumnDefinitions="1.2*,6*,2.8*" ColumnSpacing="5" Padding="2,0,2,0">
                                     <Label Text="{Binding Row, StringFormat='L{0:F0}:'}" Grid.Column="0" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{StaticResource Gray200}" />
                                     <Label Text="{Binding Label}" Grid.Column="2" VerticalOptions="Center" Padding="0,5,0,5" TextColor="{StaticResource Gray400}" />
                                     <Label Text="{Binding Skill}" Grid.Column="1" VerticalOptions="Center" Padding="0,5,0,5" />
@@ -60,11 +60,11 @@
                 </ListView>
             </VerticalStackLayout>
 
-            <Border Grid.Row="2" Style="{StaticResource borderStyle}">
+            <Border Grid.Row="2" Style="{StaticResource borderStyle}" InputTransparent="False">
+                <Border.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding StartStopCommand}" />
+                </Border.GestureRecognizers>
                 <Label Text="{Binding RandomSkill}" FontSize="20" TextColor="{AppThemeBinding Light={StaticResource Primary},Dark={StaticResource Primary}}" HorizontalOptions="Center" VerticalOptions="Center" HorizontalTextAlignment="Center" VerticalTextAlignment="Center">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding StartStopCommand}" />
-                    </Label.GestureRecognizers>
                 </Label>
             </Border>
         </Grid>

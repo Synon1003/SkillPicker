@@ -17,7 +17,7 @@ namespace SkillPicker
         private LoadSkillsPage _loadSkillsPage;
         private SaveSkillsPage _saveSkillsPage;
         private NewImagePage _newImagePage;
-        private PracticeLabelEditorPage _practiceLabelEditorPage;
+        private PracticeLabelsPage _practiceLabelsPage;
 
         public AppShell(ISkillPickerModel skillPickerModel)
         {
@@ -31,12 +31,13 @@ namespace SkillPicker
             _skillPickerViewModel.NewImage += new EventHandler(SkillPickerViewModel_NewImage);
             _skillPickerViewModel.ImageAddedToGallery += new EventHandler(SkillPickerViewModel_ImageAddedToGallery);
             _skillPickerViewModel.ManageLabels += new EventHandler(SkillPickerViewModel_ManageLabels);
+            _skillPickerViewModel.SetLabels += new EventHandler(SkillPickerViewModel_SetLabels);
 
             _newImagePage = new NewImagePage();
             _newImagePage.BindingContext = _skillPickerViewModel;
 
-            _practiceLabelEditorPage = new PracticeLabelEditorPage();
-            _practiceLabelEditorPage.BindingContext = _skillPickerViewModel;
+            _practiceLabelsPage = new PracticeLabelsPage();
+            _practiceLabelsPage.BindingContext = _skillPickerViewModel;
 
             _store = new Store();
             _storeModel = new StoredSkillsBrowserModel(_store);
@@ -77,7 +78,12 @@ namespace SkillPicker
 
         private async void SkillPickerViewModel_ManageLabels(object? sender, System.EventArgs e)
         {
-            await Navigation.PushAsync(_practiceLabelEditorPage);
+            await Navigation.PushAsync(_practiceLabelsPage);
+        }
+
+        private async void SkillPickerViewModel_SetLabels(object? sender, System.EventArgs e)
+        {
+            await Navigation.PopAsync();
         }
 
         private async void StoreViewModel_SkillsLoading(object? sender, StoredSkillsEventArgs e)

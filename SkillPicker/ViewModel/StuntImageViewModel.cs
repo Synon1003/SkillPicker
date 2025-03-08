@@ -2,10 +2,10 @@
 {
     public class StuntImageViewModel : ViewModelBase
     {
-        private String _stunt;
-        private String _protagonist;
-        private String _filename;
-        private String _imageUrl;
+        private String _stunt = String.Empty;
+        private String _protagonist = String.Empty;
+        private String _filename = String.Empty;
+        private String _imageUrl = String.Empty;
         private byte[] _bytes = [];
 
         public String Stunt

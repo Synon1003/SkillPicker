@@ -15,10 +15,11 @@ namespace SkillPicker.ViewModel
         private List<SkillViewModel> _searchedSkills;
         private ObservableCollection<StuntImageViewModel> _stuntImages;
 
-        private Int32 _warmUps = 4;
-        private Int32 _learnings = 1;
+        private Int32 _warmUps = 3;
+        private Int32 _learnings = 3;
         private ObservableCollection<FieldViewModel> _warmUpFields;
         private ObservableCollection<FieldViewModel> _learningFields;
+        private ObservableCollection<String> _practiceLabels;
 
         private ObservableCollection<SkillViewModel> _warmUpSkills;
         private ObservableCollection<SkillViewModel> _learningSkills;
@@ -144,6 +145,19 @@ namespace SkillPicker.ViewModel
             }
         }
 
+        public ObservableCollection<String> PracticeLabels
+        {
+            get { return _practiceLabels; }
+            set
+            {
+                if (_practiceLabels != value)
+                {
+                    _practiceLabels = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
         public ObservableCollection<SkillViewModel> WarmUpSkills
         {
             get { return _warmUpSkills; }
@@ -191,13 +205,15 @@ namespace SkillPicker.ViewModel
         public DelegateCommand DeleteImageCommand { get; private set; }
         public DelegateCommand AddImageToGalleryCommand { get; private set; }
         public DelegateCommand ManageLabelsCommand { get; private set; }
+        public DelegateCommand SetLabelsCommand { get; private set; }
+        public DelegateCommand ResetLabelsCommand { get; private set; }
 
-        public event EventHandler<ApplicationMessageEventArgs>? ApplicationMessaged;
         public event EventHandler? LoadSkills;
         public event EventHandler? SaveSkills;
         public event EventHandler? NewImage;
         public event EventHandler? ImageAddedToGallery;
         public event EventHandler? ManageLabels;
+        public event EventHandler? SetLabels;
         #endregion
 
 
@@ -208,6 +224,7 @@ namespace SkillPicker.ViewModel
             _model.PracticeChanged += new EventHandler<PracticeChangedEventArgs>(Model_PracticeChanged);
             _model.PracticeSkillsChanged += new EventHandler<PracticeChangedEventArgs>(Model_PracticeSkillsChanged);
             _model.StuntImagesChanged += new EventHandler<StuntImagesChangedEventArgs>(Model_StuntImagesChanged);
+            _model.PracticeLabelsChanged += new EventHandler<PracticeLabelsChangedEventArgs>(Model_PracticeLabelsChanged);
             _model.RandomSkillPicked += new EventHandler(Model_RandomSkillPicked);
 
             _skillViewModel = new SkillViewModel();
@@ -217,7 +234,8 @@ namespace SkillPicker.ViewModel
 
             _warmUpFields = new ObservableCollection<FieldViewModel>();
             _learningFields = new ObservableCollection<FieldViewModel>();
-            
+            _practiceLabels = new ObservableCollection<String>(new String[18]);
+
             _warmUpSkills = new ObservableCollection<SkillViewModel>();
             _learningSkills = new ObservableCollection<SkillViewModel>();
 
@@ -234,16 +252,18 @@ namespace SkillPicker.ViewModel
             DowngradeSkillCommand = new DelegateCommand(param => OnDowngradeSkill(param as SkillViewModel));
             UpgradeSkillCommand = new DelegateCommand(param => OnUpgradeSkill(param as SkillViewModel));
             ManageLabelsCommand = new DelegateCommand(param => OnManageLabels());
+            SetLabelsCommand = new DelegateCommand(param => OnSetLabels());
+            ResetLabelsCommand = new DelegateCommand(param => OnResetLabels());
             NewImageCommand = new DelegateCommand(param => OnNewImage());
-            PickAnImageCommand = new DelegateCommand(param => OnPickAnImageCommand());
-            TakeAPictureCommand = new DelegateCommand(param => OnTakeAPictureCommand());
-            AddImageToGalleryCommand = new DelegateCommand(param => OnAddImageToGalleryCommand());
-            DeleteImageCommand = new DelegateCommand(param => OnDeleteImageCommand(param as StuntImageViewModel));
+            PickAnImageCommand = new DelegateCommand(param => OnPickAnImage());
+            TakeAPictureCommand = new DelegateCommand(param => OnTakeAPicture());
+            AddImageToGalleryCommand = new DelegateCommand(param => OnAddImageToGallery());
+            DeleteImageCommand = new DelegateCommand(param => OnDeleteImage(param as StuntImageViewModel));
 
         }
         #endregion
 
-        #region Private Methods
+        #region Model_EventHandlers
         private void Model_SkillsChanged(object? sender, SkillsChangedEventArgs e)
         {
             List<SkillViewModel> warmUpList = new List<SkillViewModel>();
@@ -273,7 +293,7 @@ namespace SkillPicker.ViewModel
 
         private void Model_PracticeChanged(object? sender, PracticeChangedEventArgs e)
         {
-            var practiceWarmUpList = e.PracticeList.Where(s => s.Type == "WarmUp").ToList();
+            var practiceWarmUpList = e.Practice.Where(s => s.Type == "WarmUp").ToList();
             WarmUpFields.Clear();
 
             for (Int32 idx = 0; idx < practiceWarmUpList.Count; idx++)
@@ -286,7 +306,7 @@ namespace SkillPicker.ViewModel
                 });
             }
 
-            var practiceLearningList = e.PracticeList.Where(s => s.Type == "Learning").ToList();
+            var practiceLearningList = e.Practice.Where(s => s.Type == "Learning").ToList();
             LearningFields.Clear();
 
             for (Int32 idx = 0; idx < practiceLearningList.Count; idx++)
@@ -302,14 +322,14 @@ namespace SkillPicker.ViewModel
 
         private void Model_PracticeSkillsChanged(object? sender, PracticeChangedEventArgs e)
         {
-            var practiceWarmUpList = e.PracticeList.Where(s => s.Type == "WarmUp").ToList();
+            var practiceWarmUpList = e.Practice.Where(s => s.Type == "WarmUp").ToList();
             for (Int32 idx = 0; idx < practiceWarmUpList.Count; idx++)
             {
                 WarmUpFields[idx].Skill = practiceWarmUpList[idx].Name;
                 WarmUpFields[idx].Label = practiceWarmUpList[idx].Label;
             }
 
-            var practiceLearningList = e.PracticeList.Where(s => s.Type == "Learning").ToList();
+            var practiceLearningList = e.Practice.Where(s => s.Type == "Learning").ToList();
             for (Int32 idx = 0; idx < practiceLearningList.Count; idx++)
             {
                 LearningFields[idx].Skill = practiceLearningList[idx].Name;
@@ -332,6 +352,14 @@ namespace SkillPicker.ViewModel
             }
         }
 
+        private void Model_PracticeLabelsChanged(object? sender, PracticeLabelsChangedEventArgs e)
+        {
+            if (PracticeLabels.Count != e.PracticeLabels.Count)
+                return;
+
+            PracticeLabels = new ObservableCollection<String>(e.PracticeLabels);
+        }
+
         private void Model_RandomSkillPicked(object? sender, EventArgs e)
         {
             MainThread.BeginInvokeOnMainThread(() =>
@@ -339,7 +367,9 @@ namespace SkillPicker.ViewModel
                 OnPropertyChanged(nameof(RandomSkill));
             });
         }
+        #endregion
 
+        #region Private Methods
         private void OnSearchSkill(String searchString)
         {
             List<SkillViewModel> searchedWarmUpSkills = WarmUpSkills.Where(s => s.Text.ToLower().Contains(searchString.ToLower()) || s.Label.ToLower().Contains(searchString.ToLower())).ToList();
@@ -419,7 +449,19 @@ namespace SkillPicker.ViewModel
             NewImage?.Invoke(this, EventArgs.Empty);
         }
 
-        private async void OnPickAnImageCommand()
+        private void OnSetLabels()
+        {
+            _model.SetLabels(_practiceLabels.ToList());
+
+            SetLabels?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void OnResetLabels()
+        {
+            _model.InitPracticeLabels();
+        }
+
+        private async void OnPickAnImage()
         {
             FileResult? image = await FilePicker.PickAsync(new PickOptions
             {
@@ -434,7 +476,7 @@ namespace SkillPicker.ViewModel
             StuntImageViewModel.Filename = image.FileName;
         }
 
-        private async void OnTakeAPictureCommand()
+        private async void OnTakeAPicture()
         {
             FileResult? photo = await MediaPicker.Default.CapturePhotoAsync(new MediaPickerOptions
             { 
@@ -443,15 +485,15 @@ namespace SkillPicker.ViewModel
 
             if (photo == null)
                 return;
-            
+
             StuntImageViewModel.Bytes = File.ReadAllBytes(photo.FullPath);
             StuntImageViewModel.Filename = photo.FileName;
         }
+        
 
-        private async void OnAddImageToGalleryCommand()
+        private async void OnAddImageToGallery()
         {
-            if (StuntImageViewModel.Bytes == null || String.IsNullOrEmpty(StuntImageViewModel.Filename)
-                || StuntImages.Count >= 10)
+            if (String.IsNullOrEmpty(StuntImageViewModel.Filename) || StuntImages.Count >= 10)
                 return;
 
             ImageAddedToGallery?.Invoke(this, EventArgs.Empty);
@@ -466,7 +508,7 @@ namespace SkillPicker.ViewModel
             StuntImageViewModel = new StuntImageViewModel();
         }
 
-        private void OnDeleteImageCommand(StuntImageViewModel image)
+        private void OnDeleteImage(StuntImageViewModel image)
         {
             if (StuntImages.Count > 1)
             {
@@ -481,7 +523,6 @@ namespace SkillPicker.ViewModel
                 });
             }
         }
-
-        #endregion
+    #endregion
     }
 }
